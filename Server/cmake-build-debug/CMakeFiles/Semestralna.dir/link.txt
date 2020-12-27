@@ -1,0 +1,1 @@
+/usr/bin/cc  -g   CMakeFiles/Semestralna.dir/main.c.o  -o Semestralna 
