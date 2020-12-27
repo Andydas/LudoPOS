@@ -1,3 +1,0 @@
-/tmp/tmp.oMIICSFL3Y/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/tmp/tmp.oMIICSFL3Y/cmake-build-debug/CMakeFiles/edit_cache.dir
-/tmp/tmp.oMIICSFL3Y/cmake-build-debug/CMakeFiles/server.dir
