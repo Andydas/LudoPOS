@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
         }
         printf("Sprava od klienta: %s\n", buffer);
 
-        const char* msg = "Dostal som tvoju spravu Andydas";
+        const char* msg = "Dostal som tvoju spravu Andydas :)";
         n = write(socketKlient, msg, strlen(msg) + 1);
         if (n < 0)
         {
