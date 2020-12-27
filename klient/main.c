@@ -10,59 +10,60 @@
 
 int main(int argc, char *argv[])
 {
-    int sockfd, n;
-    struct sockaddr_in serv_addr;
+    int socketServer;
+    int n;
+    struct sockaddr_in serverAdresa;
     struct hostent* server;
 
     char buffer[256];
 
     if (argc < 3)
     {
-        fprintf(stderr,"usage %s hostname port\n", argv[0]);
+        fprintf(stderr,"Malo argumentov!\n", argv[0]);
         return 1;
     }
 
     server = gethostbyname(argv[1]);
     if (server == NULL)
     {
-        fprintf(stderr, "Error, no such host\n");
+        fprintf(stderr, "Zvoleny host neexistuje!\n");
         return 2;
     }
 
-    bzero((char*)&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
+    bzero((char*)&serverAdresa, sizeof(serverAdresa));
+    serverAdresa.sin_family = AF_INET;
     bcopy(
             (char*)server->h_addr,
-            (char*)&serv_addr.sin_addr.s_addr,
+            (char*)&serverAdresa.sin_addr.s_addr,
             server->h_length
     ); //janko je fesak
-    serv_addr.sin_port = htons(atoi(argv[2]));
+    serverAdresa.sin_port = htons(atoi(argv[2]));
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
+    socketServer = socket(AF_INET, SOCK_STREAM, 0);
+    if (socketServer < 0)
     {
-        perror("Error creating socket");
+        perror("Chyba pri vytvarani socketu!");
         return 3;
     }
 
-    if(connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
+    if(connect(socketServer, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
     {
-        perror("Error connecting to socket");
+        perror("Chyba pri pripajani sa do socketu!");
         return 4;
     }
 
     bool koniec = false;
 
     while (koniec == false) {
-        printf("Please enter a message: ");
+        printf("Napis spravu: ");
 
         bzero(buffer,256);
         fgets(buffer, 255, stdin);
 
-        n = write(sockfd, buffer, strlen(buffer));
+        n = write(socketServer, buffer, strlen(buffer));
         if (n < 0)
         {
-            perror("Error writing to socket");
+            perror("Chyba pri zapisovani do socketu");
             return 5;
         }
 
@@ -70,17 +71,17 @@ int main(int argc, char *argv[])
             koniec = true;
 
         bzero(buffer,256);
-        n = read(sockfd, buffer, 255);
+        n = read(socketServer, buffer, 255);
         if (n < 0)
         {
-            perror("Error reading from socket");
+            perror("Chyba pri citani zo socketu");
             return 6;
         }
 
     }
 
     printf("%s\n",buffer);
-    close(sockfd);
+    close(socketServer);
 
     return 0;
 }
