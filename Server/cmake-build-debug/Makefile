@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /tmp/tmp.Ooqi11kRbC
+CMAKE_SOURCE_DIR = /tmp/tmp.oMIICSFL3Y
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /tmp/tmp.Ooqi11kRbC/cmake-build-debug
+CMAKE_BINARY_DIR = /tmp/tmp.oMIICSFL3Y/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.Ooqi11kRbC/cmake-build-debug/CMakeFiles /tmp/tmp.Ooqi11kRbC/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.oMIICSFL3Y/cmake-build-debug/CMakeFiles /tmp/tmp.oMIICSFL3Y/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.Ooqi11kRbC/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.oMIICSFL3Y/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Server
+# Target rules for targets named server
 
 # Build rule for target.
-Server: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Server
-.PHONY : Server
+server: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 server
+.PHONY : server
 
 # fast build rule for target.
-Server/fast:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/build
-.PHONY : Server/fast
+server/fast:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
+.PHONY : server/fast
 
 main.o: main.c.o
 
@@ -129,7 +129,7 @@ main.o: main.c.o
 
 # target to build an object file
 main.c.o:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/main.c.o
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/main.c.o
 .PHONY : main.c.o
 
 main.i: main.c.i
@@ -138,7 +138,7 @@ main.i: main.c.i
 
 # target to preprocess a source file
 main.c.i:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/main.c.i
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/main.c.i
 .PHONY : main.c.i
 
 main.s: main.c.s
@@ -147,7 +147,7 @@ main.s: main.c.s
 
 # target to generate assembly for a file
 main.c.s:
-	$(MAKE) -f CMakeFiles/Server.dir/build.make CMakeFiles/Server.dir/main.c.s
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/main.c.s
 .PHONY : main.c.s
 
 # Help Target
@@ -158,7 +158,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... Server"
+	@echo "... server"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

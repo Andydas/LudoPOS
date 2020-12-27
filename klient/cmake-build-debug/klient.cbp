@@ -8,38 +8,38 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/tmp/tmp.rEljRHw7Y7/cmake-build-debug"/>
+				<Option working_dir="/tmp/tmp.fW8X23MB93/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/tmp/tmp.rEljRHw7Y7/cmake-build-debug"/>
+				<Option working_dir="/tmp/tmp.fW8X23MB93/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/tmp/tmp.rEljRHw7Y7/cmake-build-debug"/>
+				<Option working_dir="/tmp/tmp.fW8X23MB93/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="klient">
-				<Option output="/tmp/tmp.rEljRHw7Y7/cmake-build-debug/klient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/tmp/tmp.rEljRHw7Y7/cmake-build-debug"/>
+				<Option output="/tmp/tmp.fW8X23MB93/cmake-build-debug/klient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.fW8X23MB93/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -51,15 +51,15 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 klient"/>
-					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 klient"/>
+					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="klient/fast">
-				<Option output="/tmp/tmp.rEljRHw7Y7/cmake-build-debug/klient" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/tmp/tmp.rEljRHw7Y7/cmake-build-debug"/>
+				<Option output="/tmp/tmp.fW8X23MB93/cmake-build-debug/klient" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.fW8X23MB93/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -71,17 +71,17 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 klient/fast"/>
-					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.rEljRHw7Y7/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 klient/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/tmp/tmp.fW8X23MB93/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/tmp/tmp.rEljRHw7Y7/main.c">
+		<Unit filename="/tmp/tmp.fW8X23MB93/main.c">
 			<Option target="klient"/>
 		</Unit>
-		<Unit filename="/tmp/tmp.rEljRHw7Y7/CMakeLists.txt">
+		<Unit filename="/tmp/tmp.fW8X23MB93/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>
