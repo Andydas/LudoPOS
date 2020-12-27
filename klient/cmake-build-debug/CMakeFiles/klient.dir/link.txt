@@ -1,1 +1,1 @@
-/usr/bin/cc  -g   CMakeFiles/klient.dir/main.c.o  -o klient 
+/usr/bin/cc  -g   CMakeFiles/klient.dir/main.c.o  -o klient -lpthread 

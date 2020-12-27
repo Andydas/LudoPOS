@@ -6,11 +6,52 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <stdbool.h>
+//#include "funkcie.h"
+
+typedef struct data{
+    int sock;
+    char * buffer;
+    int n;
+} DATA;
+
+void* hodKockou(void* param) {
+    DATA* data = (DATA*) param;
+    bool koniec = false;
+    while (!koniec) {
+        printf("Napis spravu: ");
+
+        bzero(data->buffer,256);
+        fgets(data->buffer, 255, stdin);
+
+        data->n = write(data->sock, data->buffer, strlen(data->buffer));
+        if (data->n < 0)
+        {
+            perror("Chyba pri zapisovani do socketu");
+            //return 5;
+        }
+        printf("Uspesne zapisane do socketu!\n");
+
+        if (data->buffer[0] == '0')
+            koniec = true;
+
+        bzero(data->buffer,256);
+        data->n = read(data->sock, data->buffer, 255);
+        if (data->n < 0)
+        {
+            perror("Chyba pri citani zo socketu");
+            //return 6;
+        }
+        printf("Uspesne citanie do socketu!\n");
+        printf("%s\n",data->buffer);
+    }
+
+}
 
 int main(int argc, char *argv[])
 {
-    int socketServer;
+    int sock;
     int n;
     struct sockaddr_in serverAdresa;
     struct hostent* server;
@@ -22,6 +63,7 @@ int main(int argc, char *argv[])
         fprintf(stderr,"Malo argumentov!\n", argv[0]);
         return 1;
     }
+    printf("Dostatocny pocet argumentov!\n");
 
     server = gethostbyname(argv[1]);
     if (server == NULL)
@@ -29,6 +71,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Zvoleny host neexistuje!\n");
         return 2;
     }
+    printf("Pripojene na zvoleny host!\n");
 
     bzero((char*)&serverAdresa, sizeof(serverAdresa));
     serverAdresa.sin_family = AF_INET;
@@ -36,52 +79,39 @@ int main(int argc, char *argv[])
             (char*)server->h_addr,
             (char*)&serverAdresa.sin_addr.s_addr,
             server->h_length
-    ); //janko je fesak
+    );
     serverAdresa.sin_port = htons(atoi(argv[2]));
 
-    socketServer = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketServer < 0)
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0)
     {
         perror("Chyba pri vytvarani socketu!");
         return 3;
     }
+    printf("Socket uspesne vytvoreny!\n");
 
-    if(connect(socketServer, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
+    if(connect(sock, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
     {
         perror("Chyba pri pripajani sa do socketu!");
         return 4;
     }
+    printf("Socket uspesne pripojeny!\n");
 
-    bool koniec = false;
+    DATA pomData;
+    pomData.buffer = buffer;
+    pomData.n = n;
+    pomData.sock = sock;
 
-    while (koniec == false) {
-        printf("Napis spravu: ");
+    pthread_t thread;
+    pthread_create(&thread, NULL, &hodKockou, (void*)&pomData);
 
-        bzero(buffer,256);
-        fgets(buffer, 255, stdin);
+    pthread_join(thread, NULL);
 
-        n = write(socketServer, buffer, strlen(buffer));
-        if (n < 0)
-        {
-            perror("Chyba pri zapisovani do socketu");
-            return 5;
-        }
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 
-        if (buffer[0] == '0')
-            koniec = true;
 
-        bzero(buffer,256);
-        n = read(socketServer, buffer, 255);
-        if (n < 0)
-        {
-            perror("Chyba pri citani zo socketu");
-            return 6;
-        }
 
-    }
-
-    printf("%s\n",buffer);
-    close(socketServer);
-
+    close(sock);
+    pthread_mutex_destroy(&mut);
     return 0;
 }
