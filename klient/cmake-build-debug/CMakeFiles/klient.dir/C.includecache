@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/tmp/tmp.rEljRHw7Y7/funkcie.h
+stdbool.h
+-
+
+/tmp/tmp.rEljRHw7Y7/main.c
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+netdb.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+unistd.h
+-
+pthread.h
+-
+funkcie.h
+/tmp/tmp.rEljRHw7Y7/funkcie.h
+
