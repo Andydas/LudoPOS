@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
             (char*)server->h_addr,
             (char*)&serv_addr.sin_addr.s_addr,
             server->h_length
-    );
+    ); //janko je fesak
     serv_addr.sin_port = htons(atoi(argv[2]));
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
