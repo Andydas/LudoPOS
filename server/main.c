@@ -5,9 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 int main(int argc, char * argv[])
 {
+    int pocetUsers = 0;
     int socketServer;
     int socketKlient;
     socklen_t cli_len;
@@ -40,34 +42,47 @@ int main(int argc, char * argv[])
         return 2;
     }
 
-    listen(socketServer, 5);
-    cli_len = sizeof(klientAdresa);
+    listen(socketServer, 5)   ;
+    cli_len = sizeof(klientAdresa)    ;
 
-    socketKlient = accept(socketServer, (struct sockaddr*)&klientAdresa, &cli_len);
-    if (socketKlient < 0)
-    {
-        perror("Chyba pri accepte");
-        return 3;
-    }
+    while (pocetUsers < 5)    {
 
-    int maxSpravy = 100;
+        socketKlient = accept(socketServer, (struct sockaddr *) &klientAdresa, &cli_len)       ;
 
-    for (int i = 0; i < maxSpravy; i++) {
-        bzero(buffer,256);
-        n = read(socketKlient, buffer, 255);
-        if (n < 0)
-        {
-            perror("Nepodarilo sa nacitat zo socketu");
-            return 4;
+        char buff[1];
+        sprintf(buff, "%d",socketKlient )   ;
+       // const char *buff = socketKlient      ;
+        n = write(socketKlient, buff, strlen(buff) + 1)      ;
+
+        printf("Csilo socket: %d\n", socketKlient)      ;
+        pocetUsers++;
+        if (socketKlient < 0) {
+            perror("Chyba pri accepte" )      ;
+            return 3       ;
         }
-        printf("Sprava od klienta: %s\n", buffer);
 
-        const char* msg = "Dostal som tvoju spravu Andydas :)";
-        n = write(socketKlient, msg, strlen(msg) + 1);
-        if (n < 0)
-        {
-            perror("Nepodarilo sa zapisat");
-            return 5;
+        int maxSpravy = 2;
+
+
+        bool koniec = false;
+        while (!koniec) {
+            bzero(buffer, 256);
+            n = read(socketKlient, buffer, 255);
+            if (n < 0) {
+                perror("Nepodarilo sa nacitat zo socketu")           ;
+                return 4;
+            }
+            printf("Sprava od klienta: %s\n", buffer);
+
+            if (buffer[0] == '0')
+                koniec = true;
+
+            const char *msg = "Dostal som tvoju spravu Andydas :)"  ;
+            n = write(socketKlient, msg, strlen(msg) + 1);
+            if (n < 0) {
+                perror("Nepodarilo sa zapisat")      ;
+                return 5;
+            }
         }
     }
 

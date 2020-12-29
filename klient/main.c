@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
     pomData.sock = sock;
 
     pthread_t thread;
-    pthread_create(&thread, NULL, &hodKockou, (void*)&pomData);
+    pthread_create(&thread, NULL, &hodKockou, (void*) &pomData);
 
     pthread_join(thread, NULL);
 
-    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER ;
 
 
 
