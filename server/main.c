@@ -50,11 +50,14 @@ int main(int argc, char * argv[])
         return 3;
     }
 
+    const char* ID = socketKlient;
+    n = write(socketKlient, ID, strlen(ID) + 1);
+
     int maxSpravy = 100;
 
     for (int i = 0; i < maxSpravy; i++) {
         bzero(buffer,256);
-        n = read(socketKlient, buffer, 255);
+        n = read(socketKlient, buffer, 255);//255 dat ako konstantu
         if (n < 0)
         {
             perror("Nepodarilo sa nacitat zo socketu");
@@ -64,6 +67,7 @@ int main(int argc, char * argv[])
 
         const char* msg = "Dostal som tvoju spravu Andydas :)";
         n = write(socketKlient, msg, strlen(msg) + 1);
+        write(4, 'x', strlen(msg) + 1);
         if (n < 0)
         {
             perror("Nepodarilo sa zapisat");

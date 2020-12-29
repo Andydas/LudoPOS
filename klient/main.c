@@ -11,6 +11,7 @@
 //#include "funkcie.h"
 
 typedef struct data{
+    int ID;
     int sock;
     char * buffer;
     int n;
@@ -19,6 +20,13 @@ typedef struct data{
 void* hodKockou(void* param) {
     DATA* data = (DATA*) param;
     bool koniec = false;
+
+    bzero(data->buffer,256);
+    read(data->sock, data->buffer, 1);
+    char* idecko = data->buffer;
+    data->ID = atoi(idecko);
+    printf("Moje ID je %d\n", data->ID);
+
     while (!koniec) {
         printf("Napis spravu: ");
 
@@ -97,7 +105,10 @@ int main(int argc, char *argv[])
     }
     printf("Socket uspesne pripojeny!\n");
 
+
+
     DATA pomData;
+    pomData.ID = -111;
     pomData.buffer = buffer;
     pomData.n = n;
     pomData.sock = sock;
