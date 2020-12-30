@@ -5,10 +5,23 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-void* hodKockou(void* param) {
+void hodKockou(void* param) {
     DATA* data = (DATA*) param;
     bool koniec = false;
+
+
+    //zistenie mojho ID od serveru
+    bzero(data->buffer,256);
+    read(data->sock, data->buffer, 256);
+    char* idecko = data->buffer;
+    data->ID = atoi(idecko);
+    printf("Moje ID je %d\n", data->ID);
+
+
+
+    //posielanie sprav
     while (!koniec) {
+
         printf("Napis spravu: ");
 
         bzero(data->buffer,256);
@@ -18,7 +31,7 @@ void* hodKockou(void* param) {
         if (data->n < 0)
         {
             perror("Chyba pri zapisovani do socketu");
-            return 5;
+            //return 5;
         }
         printf("Uspesne zapisane do socketu!\n");
 
@@ -30,7 +43,7 @@ void* hodKockou(void* param) {
         if (data->n < 0)
         {
             perror("Chyba pri citani zo socketu");
-            return 6;
+            //return 6;
         }
         printf("Uspesne citanie do socketu!\n");
         printf("%s\n",data->buffer);

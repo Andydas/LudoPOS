@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/server.dir/main.c.o"
+  "CMakeFiles/server.dir/funkcie.c.o"
   "server.pdb"
   "server"
 )

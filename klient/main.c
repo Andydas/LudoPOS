@@ -8,54 +8,9 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <stdbool.h>
-//#include "funkcie.h"
+#include "funkcie.h"
 
-typedef struct data{
-    int ID;
-    int sock;
-    char * buffer;
-    int n;
-} DATA;
 
-void* hodKockou(void* param) {
-    DATA* data = (DATA*) param;
-    bool koniec = false;
-
-    bzero(data->buffer,256);
-    read(data->sock, data->buffer, 1);
-    char* idecko = data->buffer;
-    data->ID = atoi(idecko);
-    printf("Moje ID je %d\n", data->ID);
-
-    while (!koniec) {
-        printf("Napis spravu: ");
-
-        bzero(data->buffer,256);
-        fgets(data->buffer, 255, stdin);
-
-        data->n = write(data->sock, data->buffer, strlen(data->buffer));
-        if (data->n < 0)
-        {
-            perror("Chyba pri zapisovani do socketu");
-            //return 5;
-        }
-        printf("Uspesne zapisane do socketu!\n");
-
-        if (data->buffer[0] == '0')
-            koniec = true;
-
-        bzero(data->buffer,256);
-        data->n = read(data->sock, data->buffer, 255);
-        if (data->n < 0)
-        {
-            perror("Chyba pri citani zo socketu");
-            //return 6;
-        }
-        printf("Uspesne citanie do socketu!\n");
-        printf("%s\n",data->buffer);
-    }
-
-}
 
 int main(int argc, char *argv[])
 {
@@ -109,14 +64,17 @@ int main(int argc, char *argv[])
 
     DATA pomData;
     pomData.ID = -111;
+    pomData.somNaRade = -1;
     pomData.buffer = buffer;
     pomData.n = n;
     pomData.sock = sock;
 
-    pthread_t thread;
-    pthread_create(&thread, NULL, &hodKockou, (void*) &pomData);
+    hodKockou((void*)&pomData);
 
-    pthread_join(thread, NULL);
+    //pthread_t thread;
+    //pthread_create(&thread, NULL, &hodKockou, (void*) &pomData);
+
+    //pthread_join(thread, NULL);
 
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER ;
 

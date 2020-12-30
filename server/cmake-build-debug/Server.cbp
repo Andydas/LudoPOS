@@ -78,6 +78,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/tmp/tmp.GJTHKBOe26/funkcie.c">
+			<Option target="server"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.GJTHKBOe26/funkcie.h">
+			<Option target="server"/>
+		</Unit>
 		<Unit filename="/tmp/tmp.GJTHKBOe26/main.c">
 			<Option target="server"/>
 		</Unit>

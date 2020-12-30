@@ -123,6 +123,33 @@ server/fast:
 	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
 .PHONY : server/fast
 
+funkcie.o: funkcie.c.o
+
+.PHONY : funkcie.o
+
+# target to build an object file
+funkcie.c.o:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/funkcie.c.o
+.PHONY : funkcie.c.o
+
+funkcie.i: funkcie.c.i
+
+.PHONY : funkcie.i
+
+# target to preprocess a source file
+funkcie.c.i:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/funkcie.c.i
+.PHONY : funkcie.c.i
+
+funkcie.s: funkcie.c.s
+
+.PHONY : funkcie.s
+
+# target to generate assembly for a file
+funkcie.c.s:
+	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/funkcie.c.s
+.PHONY : funkcie.c.s
+
 main.o: main.c.o
 
 .PHONY : main.o
@@ -159,6 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... server"
+	@echo "... funkcie.o"
+	@echo "... funkcie.i"
+	@echo "... funkcie.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

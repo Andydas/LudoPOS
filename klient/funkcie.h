@@ -21,6 +21,8 @@ extern "C" {
 //attr
 
 typedef struct data{
+    int ID;
+    int somNaRade;
     int sock;
     char * buffer;
     int n;
@@ -28,7 +30,10 @@ typedef struct data{
 
 //funkcie
 
-void* hodKockou (void* param);
+
+
+
+void hodKockou (void* param);
 
 
 #ifdef __cplusplus

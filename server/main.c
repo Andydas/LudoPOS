@@ -1,68 +1,9 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <pthread.h>
-
-typedef struct data {
-    int socketKlient;
-    char * buffer;
-    int n;
-} DATA;
-
-void* citaj(void * param) {
-
-    DATA* data = (DATA*) param;
-    char buff[1];
-    sprintf(buff, "%d", data->socketKlient )   ;
-    // const char *buff = socketKlient      ;
-    data->n = write(data->socketKlient, buff, strlen(buff) + 1)      ;
-
-    printf("Csilo socket: %d\n", data->socketKlient)      ;
-    if (data->socketKlient < 0) {
-        perror("Chyba pri accepte" )      ;
-        //return 3       ;
-    }
-
-    int maxSpravy = 2;
-
-
-    bool koniec = false;
-    while (!koniec) {
-        bzero(data->buffer, 256);
-        data->n = read(data->socketKlient, data->buffer, 255);
-        if (data->n < 0) {
-            perror("Nepodarilo sa nacitat zo socketu")           ;
-            //return 4;
-        }
-        printf("Sprava od klienta: %s\n", data->buffer);
-
-        if (data->buffer[0] == '0')
-            koniec = true;
-
-        const char *msg = "Dostal som tvoju spravu Andydas :)"  ;
-        data->n = write(data->socketKlient, msg, strlen(msg) + 1);
-        if (data->n < 0) {
-            perror("Nepodarilo sa zapisat")      ;
-            //return 5;
-        }
-    }
-}
+#include "funkcie.h"
 
 int main(int argc, char * argv[])
 {
-    int pocetUsers = 1;
-    int socketServer;
-    int socketKlient;
-    socklen_t cli_len;
-    struct sockaddr_in serverAdresa;
-    struct sockaddr_in klientAdresa;
-    int n;
-    char buffer[256];
+    pocetUsers = 0;
+    userNaRade = 1;
 
     if (argc < 2)
     {
@@ -70,48 +11,63 @@ int main(int argc, char * argv[])
         return 1;
     }
 
+    cisloPortu = atoi(argv[1]);
     bzero((char*)&serverAdresa, sizeof(serverAdresa));
     serverAdresa.sin_family = AF_INET;
     serverAdresa.sin_addr.s_addr = INADDR_ANY;
-    serverAdresa.sin_port = htons(atoi(argv[1]));
+    serverAdresa.sin_port = htons(cisloPortu);
 
-    socketServer = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketServer < 0)
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
     {
         perror("Chyba pri vytvarani socketu");
         return 1;
     }
 
-    if (bind(socketServer, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
+    if (bind(sockfd, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
     {
         perror("Chyba pri bindovani adresy socketu");
         return 2;
     }
 
-    listen(socketServer, 5)   ;
-    cli_len = sizeof(klientAdresa)    ;
+    listen(sockfd, 5);
+    cli_len = sizeof(klientAdresa);
 
+    DATA poleData[5];
+    pthread_t threads[5];
+    int userIDs[5];
+    for (int i = 0; i < 5; i++) {
+        userIDs[i] = 0;
+    }
 
-    pthread_t thread[5];
     while (pocetUsers < 5)    {
 
-        int socketKlient = accept(socketServer, (struct sockaddr *) &klientAdresa, &cli_len)       ;
+        int socketKlient = accept(sockfd, (struct sockaddr *) &klientAdresa, &cli_len);
+        if (socketKlient < 0) {
+            perror("Chyba pri accepte" );
+            return 3;
+        }
+        pocetUsers++;
+        bzero(buffer,256);
+
         DATA pomData;
         pomData.socketKlient = socketKlient;
+        pomData.ID = pocetUsers;
         pomData.buffer = buffer;
         pomData.n = n;
+        poleData[pocetUsers] = pomData;
+        userIDs[pocetUsers] = socketKlient;
 
-
-        pthread_create(&thread[pocetUsers], NULL, &citaj, (void*)&pomData);
-
-        pocetUsers++;
-
+        pthread_create(&threads[pocetUsers], NULL, &citajVstupy, &poleData[pocetUsers]);
 
 
     }
 
-    close(socketKlient);
-    close(socketServer);
+    close(sockfd);
+
+    for(int i = 0; i < 5; i++) {
+        pthread_join(threads[i], NULL);
+    }
 
     return 0;
 }
