@@ -31,5 +31,6 @@ typedef struct data {
 } DATA;
 
 void* citajVstupy( void* param);
+void odosliUserNaRade();
 
 #endif //SERVER_FUNKCIE_H
