@@ -23,9 +23,11 @@ extern "C" {
 typedef struct data{
     int ID;
     int somNaRade;
+    int ktoJeNaRade;
     int sock;
-    char * buffer;
     int n;
+    pthread_mutex_t * mut;
+    pthread_cond_t * odosli;
 } DATA;
 
 //funkcie
@@ -33,7 +35,7 @@ typedef struct data{
 
 
 
-void hodKockou (void* param);
+void komunikacia (void* param);
 
 
 #ifdef __cplusplus

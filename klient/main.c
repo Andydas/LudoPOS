@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in serverAdresa;
     struct hostent* server;
 
-    char buffer[256];
+
 
     if (argc < 3)
     {
@@ -61,22 +61,24 @@ int main(int argc, char *argv[])
     printf("Socket uspesne pripojeny!\n");
 
 
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t odosli = PTHREAD_COND_INITIALIZER;
 
     DATA pomData;
     pomData.ID = -111;
     pomData.somNaRade = -1;
-    pomData.buffer = buffer;
     pomData.n = n;
     pomData.sock = sock;
+    pomData.mut = &mut;
+    pomData.odosli = &odosli;
 
-    hodKockou((void*)&pomData);
+    komunikacia((void *) &pomData);
 
     //pthread_t thread;
-    //pthread_create(&thread, NULL, &hodKockou, (void*) &pomData);
+    //pthread_create(&thread, NULL, &komunikacia, (void*) &pomData);
 
     //pthread_join(thread, NULL);
 
-    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER ;
 
 
 
