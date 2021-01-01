@@ -36,8 +36,10 @@ int main(int argc, char * argv[])
     DATA poleData[5];
     pthread_t threads[5];
     int userIDs[5];
+
     for (int i = 0; i < 5; i++) {
         userIDs[i] = 0;
+        onlineUSers[i] = 0;
     }
 
     while (pocetUsers < 5){
@@ -56,7 +58,7 @@ int main(int argc, char * argv[])
         pomData.n = n;
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
-
+        onlineUSers[pocetUsers - 1] = 1;
        pthread_create(&threads[pocetUsers], NULL, &citajVstupy, &poleData[pocetUsers]);
     }
 
