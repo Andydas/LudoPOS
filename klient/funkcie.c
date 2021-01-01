@@ -22,13 +22,29 @@ void hodKockou(void* param) {
     //posielanie sprav
     while (!koniec) {
 
+        /*//klient caka kym je na rade, az potom posiela spravy
+        while (data->somNaRade != 1){
+            bzero(data->buffer,256);
+            read(data->sock, data->buffer, 256);
+            char* somNaRade = data->buffer[3];
+            data->somNaRade = atoi(somNaRade);
+            //printf("Som na rade: %d", data->somNaRade);
+        }*/
 
-        //klient caka kym je na rade, az potom posiela spravy
-        bzero(data->buffer,256);
-        read(data->sock, data->buffer, 256);
-        char* somNaRade = data->buffer;
-        data->somNaRade = atoi(somNaRade);
-        //printf("Som na rade: %d", data->somNaRade);
+        //variant cez fajshdfla protokol
+        while (data->somNaRade != 1){
+            bzero(data->buffer,256);
+            int prebehlo = read(data->sock, data->buffer, 256);
+            if (prebehlo > 0) {
+                char precitanyBuffer = data->buffer[3];
+                int idNaRade = atoi(precitanyBuffer);
+                printf("Id na rade je %d \n", idNaRade);
+                if (idNaRade == data->ID){
+                    data->somNaRade = 1;
+                }
+            }
+
+        }
 
         if (data->somNaRade == 1) {
             printf("Teraz si na rade, tvoj vstup bude odoslany na server.\n");
@@ -54,6 +70,7 @@ void hodKockou(void* param) {
             if (data->buffer[0] == '0')
                 koniec = true;
 
+            sleep(0.5);
             bzero(data->buffer,256);
             data->n = read(data->sock, data->buffer, 255);
             if (data->n < 0)
@@ -63,6 +80,7 @@ void hodKockou(void* param) {
             }
             printf("Uspesne citanie do socketu!\n");
             printf("%s\n",data->buffer);
+
         }
 
 
