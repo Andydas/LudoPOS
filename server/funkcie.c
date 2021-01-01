@@ -25,26 +25,31 @@ void* citajVstupy(void * param) {
         if (data->n < 0) {
             perror("Nepodarilo sa nacitat zo socketu");
         }
-
         printf("Sprava od klienta %d: %s\n", data->socketKlient, data->buffer);
 
+        //kontrola ci sa ma socket uzavriet
         if (data->buffer[0] == '0')
             koniec = true;
 
         const char *msg = "Dostal som tvoju spravu Andydas :)";
         bzero(data->buffer, 256);
+
         data->n = write(data->socketKlient, msg, strlen(msg) + 1);
         if (data->n < 0) {
             perror("Nepodarilo sa zapisat");
         }
+        if (data->buffer[0] == '0')
+            pocetUsers--;
 
+
+        //posunie na rad dalsieho usera
         if (pocetUsers == userNaRade)
             userNaRade = 1;
         else
             userNaRade++;
 
     }
-    pocetUsers--;
+
     close(data->socketKlient);
 }
 

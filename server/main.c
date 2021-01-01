@@ -40,8 +40,7 @@ int main(int argc, char * argv[])
         userIDs[i] = 0;
     }
 
-    while (pocetUsers < 5)    {
-
+    while (pocetUsers < 5){
         int socketKlient = accept(sockfd, (struct sockaddr *) &klientAdresa, &cli_len);
         if (socketKlient < 0) {
             perror("Chyba pri accepte" );
@@ -58,16 +57,14 @@ int main(int argc, char * argv[])
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 
-        pthread_create(&threads[pocetUsers], NULL, &citajVstupy, &poleData[pocetUsers]);
-
-
+       pthread_create(&threads[pocetUsers], NULL, &citajVstupy, &poleData[pocetUsers]);
     }
 
-    close(sockfd);
+
 
     for(int i = 0; i < 5; i++) {
         pthread_join(threads[i], NULL);
     }
-
+    close(sockfd);
     return 0;
 }

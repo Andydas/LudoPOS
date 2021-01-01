@@ -30,9 +30,16 @@ void hodKockou(void* param) {
         data->somNaRade = atoi(somNaRade);
         //printf("Som na rade: %d", data->somNaRade);
 
-        if (data->somNaRade == 1) {//klient moze posielat spravy
-            printf("Napis spravu: ");
+        if (data->somNaRade == 1) {
+            printf("Teraz si na rade, tvoj vstup bude odoslany na server.\n");
+        } else {
+            printf("Este nie si na rade, tvoj vstup nebude odoslany na server.\n");
+        }
 
+
+        if (data->somNaRade == 1) {//klient moze posielat spravy
+
+            printf("Napis spravu: ");
             bzero(data->buffer,256);
             fgets(data->buffer, 255, stdin);
 
