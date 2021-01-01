@@ -13,6 +13,7 @@ void* citajVstupy(void * param) {
     if (data->n < 0) {
         perror("Nepodarilo sa nacitat do socketu");
     }
+    printf("Pocet uzivatrrelov %d \n", pocetUsers);
 
     while (!koniec) {
 
@@ -39,14 +40,27 @@ void* citajVstupy(void * param) {
             perror("Nepodarilo sa zapisat");
         }
         if (data->buffer[0] == '0')
-            pocetUsers--;
+        {
+            //pocetUsers--;
+            onlineUSers[userNaRade - 1] = 0;
+            //userNaRade--;
+        }
 
 
         //posunie na rad dalsieho usera
         if (pocetUsers == userNaRade)
+        {
             userNaRade = 1;
-        else
+            printf("Na rade bude %d a online %d \n", userNaRade, onlineUSers[userNaRade - 1]);
+        } else
+        {
             userNaRade++;
+            printf("Na rade bude %d a online %d \n", userNaRade, onlineUSers[userNaRade - 1]);
+        }
+
+
+
+
 
     }
 
@@ -56,15 +70,23 @@ void* citajVstupy(void * param) {
 void odosliUserNaRade() {
     char uspech[256];
     char neuspech[256];
-    sprintf(uspech, "%d", 1 );
-    sprintf(neuspech, "%d", 0 );
+
+    uspech[3] = (char)userNaRade;
+
+    //sprintf(neuspech, "%d", 0 );
 
     for (int i = 1; i <= pocetUsers; i++) {
-        if (userNaRade == i) {
-            write(i+3, uspech, strlen(uspech) + 1);
-        } else {
-            write(i+3, neuspech, strlen(neuspech) + 1);
-        }
+        write(i+3, uspech, strlen(uspech) + 1);
     }
+
+    /*for (int i = 1; i <= pocetUsers; i++) {
+        if (onlineUSers[i-1] == 1){
+            if (userNaRade == i) {
+                write(i+3, uspech, strlen(uspech) + 1);
+            } else {
+                write(i+3, neuspech, strlen(neuspech) + 1);
+            }
+        }
+    }*/
 
 }
