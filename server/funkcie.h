@@ -25,10 +25,11 @@ char buffer[256];
 int onlineUSers[5];
 
 typedef struct data {
+    volatile int * onlineUsers;
     int socketKlient;
-    char * buffer;
     int n;
     int ID;
+    int * userNaRade;
 } DATA;
 
 void* citajVstupy( void* param);

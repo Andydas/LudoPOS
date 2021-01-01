@@ -3,7 +3,7 @@
 int main(int argc, char * argv[])
 {
     pocetUsers = 0;
-    userNaRade = 1;
+    userNaRade = 0;
 
     if (argc < 2)
     {
@@ -52,17 +52,18 @@ int main(int argc, char * argv[])
         bzero(buffer,256);
 
         DATA pomData;
+        onlineUSers[pocetUsers - 1] = 1;
+
         pomData.socketKlient = socketKlient;
         pomData.ID = pocetUsers;
-        pomData.buffer = buffer;
         pomData.n = n;
+        pomData.onlineUsers = onlineUSers;
+        pomData.userNaRade = &userNaRade;
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
-        onlineUSers[pocetUsers - 1] = 1;
+
        pthread_create(&threads[pocetUsers], NULL, &citajVstupy, &poleData[pocetUsers]);
     }
-
-
 
     for(int i = 0; i < 5; i++) {
         pthread_join(threads[i], NULL);
