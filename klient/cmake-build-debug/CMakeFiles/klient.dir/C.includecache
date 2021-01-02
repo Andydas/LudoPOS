@@ -6,7 +6,31 @@
 
 #IncludeRegexTransform: 
 
-/tmp/tmp.7DHlANQ7fY/main.c
+/tmp/tmp.zodwNrnHTn/funkcie.h
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+errno.h
+-
+unistd.h
+-
+ctype.h
+-
+pthread.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+netdb.h
+-
+netinet/in.h
+-
+
+/tmp/tmp.zodwNrnHTn/main.c
 sys/types.h
 -
 sys/socket.h
@@ -27,4 +51,6 @@ pthread.h
 -
 stdbool.h
 -
+funkcie.h
+/tmp/tmp.zodwNrnHTn/funkcie.h
 

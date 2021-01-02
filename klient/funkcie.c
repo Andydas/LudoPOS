@@ -36,7 +36,7 @@ void komunikacia(void* param) {
         }*/
 
         //citanie spravy od servera
-        bzero(buffCitanie, 256);
+        //bzero(buffCitanie, 256);
         int uspech = read(data->sock, buffCitanie, 255);
         if (uspech < 0) {
             perror("Chyba pri citani zo socketu\n");//kontrola co precitalo
@@ -44,11 +44,11 @@ void komunikacia(void* param) {
 
         //zapisem si co som precital
         data->ID = buffCitanie[0];
+        data->ktoJeNaRade = buffCitanie[4];
         printf("Od servera som zistil tieto informacie:\n");
         printf("Moje id je: %d\n", data->ID);
         printf("Naposledy hral id: %d\n", buffCitanie[1]);
         printf("Posuval panacika %d o %d policok.\n", buffCitanie[2], buffCitanie[3]);
-        data->ktoJeNaRade = buffCitanie[4];
         printf("Teraz je na rade: %d\n", data->ktoJeNaRade);
 
 

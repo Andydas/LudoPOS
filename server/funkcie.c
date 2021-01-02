@@ -5,12 +5,13 @@ void* citajVstupy(void * param) {
     bool koniec = false;
     //bool zaciatok = true;
     int ktoHral = 0;
-    int hodKockou = 0;
+    int hodKockou = 2;
     int ktoraFigurka = 0;
     //int predchadzajuci = 0;
     char buffZapisovanie[256];
     char buffCitanie[256];
-    data->userNaRade++;
+    *data->userNaRade = 1;
+
 
     //odoslanie ID klientovi
     //sprintf(buff[0], "%d", data->ID );
@@ -25,7 +26,7 @@ void* citajVstupy(void * param) {
     while (!koniec) {
 
         //printf("Pocet uzivatrrelov %d \n", pocetUsers);
-        if (pocetUsers <= 1) {
+        /*if (pocetUsers <= 1) {
             for (int i = 1; i <= pocetUsers; i++) {
 
                 buffZapisovanie[0] = i;
@@ -44,7 +45,7 @@ void* citajVstupy(void * param) {
                 perror("Nepodarilo sa nacitat do socketu");
             }
 
-        } else {
+        } else {*/
 
             //odoslanie vsetko klientovi
             for (int i = 1; i <= pocetUsers; i++) {
@@ -57,14 +58,13 @@ void* citajVstupy(void * param) {
 
                     buffZapisovanie[3] = ktoraFigurka;
 
-                    buffZapisovanie[4] = 1;
+                    buffZapisovanie[4] = data->userNaRade;
 
                 data->n = write(data->socketKlient, buffZapisovanie, strlen(buffZapisovanie) + 1);
                 if (data->n < 0) {
                     perror("Nepodarilo sa nacitat do socketu");
                 }
             }
-
 
 
             //citanie spravy od klienta
@@ -87,13 +87,13 @@ void* citajVstupy(void * param) {
             if (pocetUsers == ktoHral)
             {
                 *data->userNaRade = 1;
-                printf("Na rade bude %d a online %d \n", data->userNaRade, data->userNaRade[*data->userNaRade - 1]);
+                printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
             } else
             {
-                data->userNaRade++;
-                printf("Na rade bude %d a online %d \n", data->userNaRade, data->userNaRade[*data->userNaRade - 1]);
+                *data->userNaRade += 1;
+                printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
             }
-        }
+        //}
 
 
 
