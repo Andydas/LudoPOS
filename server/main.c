@@ -4,6 +4,7 @@ int main(int argc, char * argv[])
 {
     pocetUsers = 0;
     userNaRade = 0;
+    int poleFigurok[7] = {0};
 
     if (argc < 2)
     {
@@ -55,6 +56,7 @@ int main(int argc, char * argv[])
         onlineUSers[pocetUsers - 1] = 1;
 
         pomData.socketKlient = socketKlient;
+        pomData.poleFigurok = poleFigurok;
         pomData.ID = pocetUsers;
         pomData.n = n;
         pomData.onlineUsers = onlineUSers;
@@ -62,7 +64,7 @@ int main(int argc, char * argv[])
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 
-       pthread_create(&threads[pocetUsers], NULL, &citajVstupy, &poleData[pocetUsers]);
+       pthread_create(&threads[pocetUsers], NULL, &komunikacia, &poleData[pocetUsers]);
     }
 
     for(int i = 0; i < 5; i++) {
