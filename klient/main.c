@@ -28,10 +28,8 @@ typedef struct data{
 
 
 int hodKockou() {
-    return 5+rand()%2;
+    return 1+rand()%6;
 }
-
-
 
 void precitajServerData(DATA* data){
     int uspech = read(data->sock, data->buffCitanie, VELKOST_BUFFER - 1);
@@ -165,12 +163,14 @@ void citajVstupKonzola(DATA* data){
         scanf("%d", &vstupKonzola);
 
         if (vstupKonzola == 1 || vstupKonzola == 0){
+        //if (vstupKonzola < 7 && vstupKonzola > -1){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 0, data->ID*4, 1);
                 data->koniecHry = true;
             } else {
                 int hod = hodKockou();
+                //int hod = vstupKonzola;
                 printf("Hodil si kockou, hodil si: %d\n", hod);
                 //moze hybat??????????????????????????????????????????????????????????????
                 if (mozeHybatPanacikom(data, hod)){
