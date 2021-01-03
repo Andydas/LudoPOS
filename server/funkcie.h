@@ -27,6 +27,7 @@ int onlineUSers[5];
 typedef struct data {
     volatile int * onlineUsers;
     volatile int * poleFigurok;
+    volatile int * pomocnePole;
     int socketKlient;
     int n;
     int ID;

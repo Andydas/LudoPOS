@@ -4,7 +4,8 @@ int main(int argc, char * argv[])
 {
     pocetUsers = 0;
     userNaRade = 0;
-    int poleFigurok[7] = {0};
+    int poleFigurok[8] = {0};
+    int polePomocne[4] = {0};
 
     if (argc < 2)
     {
@@ -43,7 +44,7 @@ int main(int argc, char * argv[])
         onlineUSers[i] = 0;
     }
 
-    while (pocetUsers < 5){
+    while (pocetUsers < 3){
         int socketKlient = accept(sockfd, (struct sockaddr *) &klientAdresa, &cli_len);
         if (socketKlient < 0) {
             perror("Chyba pri accepte" );
@@ -57,6 +58,7 @@ int main(int argc, char * argv[])
 
         pomData.socketKlient = socketKlient;
         pomData.poleFigurok = poleFigurok;
+        pomData.pomocnePole = polePomocne;
         pomData.ID = pocetUsers;
         pomData.n = n;
         pomData.onlineUsers = onlineUSers;
