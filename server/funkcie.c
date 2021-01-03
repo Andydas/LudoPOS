@@ -112,7 +112,7 @@ void* komunikacia(void * param) {
                     printf("Preskocil si domcek 2 \n");
                 }
             }
-            if (data->pomocnePole[(ktoraFigurka + 4) - 1] > 45 || data->pomocnePole[(ktoraFigurka + 4) - 1] == 0)
+            if (data->pomocnePole[(ktoraFigurka + 4) - 1] > 45 || data->pomocnePole[(ktoraFigurka) - 1] == 0)
             {
                 aktualnaPozicka = 200;
             } else {
