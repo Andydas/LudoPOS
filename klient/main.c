@@ -28,7 +28,7 @@ typedef struct data{
 
 
 int hodKockou() {
-    return 1+rand()%6;
+    return 5+rand()%2;
 }
 
 
@@ -88,26 +88,70 @@ void zapisServerData(DATA* data, int id, int hod, int panacik, int rezignacia){
 }
 
 bool mozeHybatPanacikom(DATA* data, int hod){
+    bool vsetciDomcek = true;
     if (data->ID == 1){
+        //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 0; i < 4; i++) {
-            //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
-            if ((data->poziciePanacikov[i] > 0) && (data->poziciePanacikov[i] + hod <= VElKOST_HRACEJ_PLOCHY)){
-                return true;
+            if (data->poziciePanacikov[i] > 0) {
+                vsetciDomcek = false;
+                break;
             }
         }
-        if (hod == 6){
+        if (vsetciDomcek && hod == 6) {
             return true;
+        } else if (vsetciDomcek && hod != 6){
+            return false;
+        }
+
+        //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
+        for (int i = 0; i < 4; i++) {
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] + hod <= VElKOST_HRACEJ_PLOCHY)){
+                return true;
+            }
         }
     } else  if (data->ID == 2){
+        //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 4; i < 8; i++) {
-            if ((data->poziciePanacikov[i] > 0) && (data->poziciePanacikov[i] + hod <= VElKOST_HRACEJ_PLOCHY)){
+            if (data->poziciePanacikov[i] > 0) {
+                vsetciDomcek = false;
+                break;
+            }
+        }
+        if (vsetciDomcek && hod == 6) {
+            return true;
+        } else if (vsetciDomcek && hod != 6){
+            return false;
+        }
+
+        //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
+        for (int i = 4; i < 8; i++) {
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] + hod <= VElKOST_HRACEJ_PLOCHY)){
                 return true;
             }
         }
-        if (hod == 6){
-            return true;
-        }
     }
+    return false;
+}
+
+bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
+
+    bool jeVDomceku = true;
+    //je v domceku? ak ano mozem sa hybat len po hode 6
+    if (data->poziciePanacikov[panacik-1] > 0) {
+        jeVDomceku = false;
+    }
+    if (jeVDomceku && hod == 6) {
+        return true;
+    } else if (jeVDomceku && hod != 6){
+        return false;
+    }
+
+    //je von z domceka? ak ano mam sa este kam posunut s danym hodom?
+    if ((!jeVDomceku) && (data->poziciePanacikov[panacik - 1] + hod <= VElKOST_HRACEJ_PLOCHY)){
+        return true;
+    }
+
+
     return false;
 }
 
@@ -127,6 +171,7 @@ void citajVstupKonzola(DATA* data){
                 data->koniecHry = true;
             } else {
                 int hod = hodKockou();
+                printf("Hodil si kockou, hodil si: %d\n", hod);
                 //moze hybat??????????????????????????????????????????????????????????????
                 if (mozeHybatPanacikom(data, hod)){
                     bool okVstupPanacik = false;
@@ -135,7 +180,8 @@ void citajVstupKonzola(DATA* data){
                         printf("Ktorym panacikom sa chces posunut?\n");
                         if (data->ID == 1) {
                             for (int i = 1; i < 5; i++) {
-                                printf("%d - panacik\n", i);
+                                if (mozeHybatKonkretnymPanacikom(data, hod, i))
+                                    printf("%d - panacik\n", i);//SEM VYPIS IBA TYCH KTORYMI MOZES HADZAT
                             }
                             scanf("%d", &vstupPanacik);
                             if (vstupPanacik > 0 && vstupPanacik < 5){
@@ -146,11 +192,12 @@ void citajVstupKonzola(DATA* data){
                             }
                         } else if (data->ID == 2){
                             for (int i = 5; i < 9; i++) {
-                                printf("%d - panacik\n", i);
+                                if (mozeHybatKonkretnymPanacikom(data, hod, i))
+                                    printf("%d - panacik\n", i);//SEM VYPIS IBA TYCH KTORYMI MOZES HADZAT
                             }
                             scanf("%d", &vstupPanacik);
                             if (vstupPanacik > 4 && vstupPanacik < 9){
-                                zapisServerData(data, data->ID, hod, vstupPanacik, 0);
+                                zapisServerData(data, data->ID, hod, vstupPanacik - 4, 0);
                                 okVstupPanacik = true;
                             } else {
                                 printf("Neplany vstup, zadaj panacika od 1 po 4.\n");
@@ -159,8 +206,8 @@ void citajVstupKonzola(DATA* data){
                     }
                 //ak sa nemoze hybat tak
                 } else {
-                    zapisServerData(data, data->ID, 0, data->ID*4, 0);
-                    printf("S danym hodom sa nemozes posunut, tak priste pane kolego....");
+                    zapisServerData(data, data->ID, hod, 1, 0);
+                    printf("S danym hodom sa nemozes posunut, tak priste pane kolego....\n");
                 }
             }
             okVstup = true;
