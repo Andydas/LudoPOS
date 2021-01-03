@@ -26,13 +26,14 @@ int onlineUSers[5];
 
 typedef struct data {
     volatile int * onlineUsers;
+    volatile int * poleFigurok;
     int socketKlient;
     int n;
     int ID;
     int * userNaRade;
 } DATA;
 
-void* citajVstupy( void* param);
-void odosliUserNaRade();
+void* komunikacia(void* param);
+void kontrola(int hod, int figurka);
 
 #endif //SERVER_FUNKCIE_H
