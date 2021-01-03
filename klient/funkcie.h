@@ -1,7 +1,6 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,30 +12,17 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-//attr
+//attr a struktury
 
-typedef struct data{
-    int ID;
-    int somNaRade;
-    int ktoJeNaRade;
-    int sock;
-    int n;
-    pthread_mutex_t * mut;
-    pthread_cond_t * odosli;
-} DATA;
+
 
 //funkcie
-
-
-
-
-void komunikacia (void* param);
-
 
 #ifdef __cplusplus
 }
