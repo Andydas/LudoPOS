@@ -14,8 +14,7 @@
 #define VELKOST_BUFFER 256
 #define POCET_POLICOK 45
 #define ID_CIEL 100
-#define VELKOST_HRACIEHO_POLA1 100
-#define VELKOST_HRACIEHO_POLA2 100
+#define VELKOST_HRACIEHO_POLA 100
 
 typedef struct data{
     bool koniecHry;
@@ -27,7 +26,7 @@ typedef struct data{
     int poziciePanacikov[POCET_PANACIKOV];
     char buffCitanie[VELKOST_BUFFER];
     char buffZapisovanie[VELKOST_BUFFER];
-    char hraciePole1[VELKOST_HRACIEHO_POLA1];
+    char hraciePole[VELKOST_HRACIEHO_POLA];
 } DATA;
 
 
@@ -36,7 +35,19 @@ int hodKockou() {
 }
 
 void zobrazHraciePole(DATA * data){
-
+    //prvy riadok
+    printf("_________________________\n");
+    printf("|       |%c| %c |%c|       |\n",data->hraciePole[19],data->hraciePole[20],data->hraciePole[21]);
+    printf("| CIEL  |%c||%c||%c|  %c %c  |\n",data->hraciePole[18],data->hraciePole[46],data->hraciePole[22],data->hraciePole[54],data->hraciePole[55]);
+    printf("|  2: %c |%c||%c||%c|  %c %c  |\n",data->hraciePole[52],data->hraciePole[17],data->hraciePole[47],data->hraciePole[23],data->hraciePole[56],data->hraciePole[57]);
+    printf("|_______|%c||%c||%c|_______|\n",data->hraciePole[16],data->hraciePole[48],data->hraciePole[24]);
+    printf("|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[11],data->hraciePole[12],data->hraciePole[13],data->hraciePole[14],data->hraciePole[15],data->hraciePole[49],data->hraciePole[25],data->hraciePole[26],data->hraciePole[27],data->hraciePole[28],data->hraciePole[29]);
+    printf("|%c|___________________|%c|\n",data->hraciePole[10],data->hraciePole[30]);
+    printf("|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[9],data->hraciePole[8],data->hraciePole[7],data->hraciePole[6],data->hraciePole[5],data->hraciePole[44],data->hraciePole[35],data->hraciePole[34],data->hraciePole[33],data->hraciePole[32],data->hraciePole[31]);
+    printf("|       |%c||%c||%c|       |\n",data->hraciePole[4],data->hraciePole[43],data->hraciePole[36]);
+    printf("|  %c %c  |%c||%c||%c| CIEL  |\n",data->hraciePole[50],data->hraciePole[51],data->hraciePole[3],data->hraciePole[42],data->hraciePole[37]);
+    printf("|  %c %c  |%c||%c||%c|  1: %c |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->hraciePole[51]);
+    printf(      "|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
 }
 
 void vypisNaKonzolu(DATA * data){
@@ -72,13 +83,6 @@ void precitajServerData(DATA* data){
     data->ktoJeNaRade = data->buffCitanie[1];
     //zapis pozicii panacikov do pola
     for (int i = 0; i < POCET_PANACIKOV; i++) {
-        /*if (data->buffCitanie[i+2] == 0) {
-            switch (i+1) {
-                case 1: {
-                }
-
-            }
-        }*/
         data->poziciePanacikov[i] = data->buffCitanie[i+2];
     }
     data->vyherca = data->buffCitanie[10];
@@ -120,9 +124,10 @@ bool mozeHybatPanacikom(DATA* data, int hod){
             return false;
         }
 
+
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
         for (int i = 0; i < 4; i++) {
-            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != 100) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK)){
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != ID_CIEL) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK)){
                 return true;
             }
         }
@@ -142,7 +147,9 @@ bool mozeHybatPanacikom(DATA* data, int hod){
 
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
         for (int i = 4; i < 8; i++) {
-            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != 100) && (data->poziciePanacikov[i] < 21) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK - 20)){
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] >= 21) && (data->poziciePanacikov[i] + hod <= 50)){
+                return true;
+            } else if ((data->poziciePanacikov[i] + hod <= 25)){
                 return true;
             }
         }
@@ -175,13 +182,12 @@ bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
         }
     }
     if (data->ID == 2) {
-        if ((!jeVDomceku) && (data->poziciePanacikov[panacik-1] >= 21) && (data->poziciePanacikov[panacik-1] + hod <= POCET_POLICOK - 20)){
+        if ((!jeVDomceku) && (data->poziciePanacikov[panacik-1] >= 21) && (data->poziciePanacikov[panacik-1] + hod <= 50)){
+            return true;
+        } else if ((data->poziciePanacikov[panacik-1] + hod <= 25)){
             return true;
         }
     }
-
-
-
     return false;
 }
 
@@ -323,6 +329,8 @@ void komunikacia(DATA* data) {
 
 int main(int argc, char *argv[])
 {
+    DATA pomData;
+
     srand(time(NULL));
     int sock;
     int n;
@@ -372,15 +380,15 @@ int main(int argc, char *argv[])
 
 
     //vytvorim datovu strukturu
-    DATA pomData;
     pomData.koniecHry = false;
     pomData.ID = -1;
     pomData.n = n;
     pomData.sock = sock;
     pomData.vyherca = 0;
-    for (int i = 0; i < VELKOST_HRACIEHO_POLA1; i++) {
-        pomData.hraciePole1[i] = '_';
+    for (int i = 0; i < VELKOST_HRACIEHO_POLA; i++) {
+        pomData.hraciePole[i] = 95;
     }
+
 
     //zacnem komunikaciu
     komunikacia(&pomData);
