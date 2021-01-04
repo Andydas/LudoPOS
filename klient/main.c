@@ -12,7 +12,10 @@
 #define POCET_HRACOV 2
 #define POCET_PANACIKOV 8
 #define VELKOST_BUFFER 256
-#define VElKOST_HRACEJ_PLOCHY 44
+#define POCET_POLICOK 45
+#define ID_CIEL 100
+#define VELKOST_HRACIEHO_POLA1 100
+#define VELKOST_HRACIEHO_POLA2 100
 
 typedef struct data{
     bool koniecHry;
@@ -24,6 +27,7 @@ typedef struct data{
     int poziciePanacikov[POCET_PANACIKOV];
     char buffCitanie[VELKOST_BUFFER];
     char buffZapisovanie[VELKOST_BUFFER];
+    char hraciePole1[VELKOST_HRACIEHO_POLA1];
 } DATA;
 
 
@@ -31,21 +35,14 @@ int hodKockou() {
     return 1+rand()%6;
 }
 
-void precitajServerData(DATA* data){
-    int uspech = read(data->sock, data->buffCitanie, VELKOST_BUFFER - 1);
-    if (uspech < 0) {
-        perror("Chyba pri citani zo socketu\n");//kontrola co precitalo
-    }
-    //zapisem si co som precital
-    data->ID = data->buffCitanie[0];
-    data->ktoJeNaRade = data->buffCitanie[1];
-    data->vyherca = data->buffCitanie[5];
-    //zapis pozicii panacikov do pola
-    for (int i = 0; i < POCET_PANACIKOV; i++) {
-        data->poziciePanacikov[i] = data->buffCitanie[i+2];
-    }
-    data->vyherca = data->buffCitanie[10];
+void zobrazHraciePole(DATA * data){
+
+}
+
+void vypisNaKonzolu(DATA * data){
     //kontrolny vypis komunikacie
+    system("clear");
+    printf("*************** HRA LUDO ***************\n");
     printf("Moje idcko je: %d\n", data->ID);
     printf("Na rade je: %d\n", data->ktoJeNaRade);
     if (data->ID == 1) {
@@ -65,6 +62,29 @@ void precitajServerData(DATA* data){
     }
 }
 
+void precitajServerData(DATA* data){
+    int uspech = read(data->sock, data->buffCitanie, VELKOST_BUFFER - 1);
+    if (uspech < 0) {
+        perror("Chyba pri citani zo socketu\n");//kontrola co precitalo
+    }
+    //zapisem si co som precital
+    data->ID = data->buffCitanie[0];
+    data->ktoJeNaRade = data->buffCitanie[1];
+    //zapis pozicii panacikov do pola
+    for (int i = 0; i < POCET_PANACIKOV; i++) {
+        /*if (data->buffCitanie[i+2] == 0) {
+            switch (i+1) {
+                case 1: {
+                }
+
+            }
+        }*/
+        data->poziciePanacikov[i] = data->buffCitanie[i+2];
+    }
+    data->vyherca = data->buffCitanie[10];
+
+}
+
 void zapisServerData(DATA* data, int id, int hod, int panacik, int rezignacia){
 
     bzero(data->buffZapisovanie, VELKOST_BUFFER);
@@ -82,7 +102,6 @@ void zapisServerData(DATA* data, int id, int hod, int panacik, int rezignacia){
         perror("Chyba pri zapisovani do socketu");
         //return 5;
     }
-    printf("Uspesne zapisane do socketu!\n");
 }
 
 bool mozeHybatPanacikom(DATA* data, int hod){
@@ -103,7 +122,7 @@ bool mozeHybatPanacikom(DATA* data, int hod){
 
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
         for (int i = 0; i < 4; i++) {
-            if ((!vsetciDomcek) && (data->poziciePanacikov[i] + hod <= VElKOST_HRACEJ_PLOCHY)){
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != 100) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK)){
                 return true;
             }
         }
@@ -123,7 +142,7 @@ bool mozeHybatPanacikom(DATA* data, int hod){
 
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
         for (int i = 4; i < 8; i++) {
-            if ((!vsetciDomcek) && (data->poziciePanacikov[i] + hod <= VElKOST_HRACEJ_PLOCHY)){
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != 100) && (data->poziciePanacikov[i] < 21) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK - 20)){
                 return true;
             }
         }
@@ -144,10 +163,23 @@ bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
         return false;
     }
 
-    //je von z domceka? ak ano mam sa este kam posunut s danym hodom?
-    if ((!jeVDomceku) && (data->poziciePanacikov[panacik - 1] + hod <= VElKOST_HRACEJ_PLOCHY)){
-        return true;
+    //je v cieli? ak ano tak sa uz nemoze hybat
+    if (data->poziciePanacikov[panacik-1] == ID_CIEL) {
+        return false;
     }
+
+    //je von z domceka? ak ano mam sa este kam posunut s danym hodom?
+    if (data->ID == 1) {
+        if ((!jeVDomceku) && (data->poziciePanacikov[panacik - 1] + hod <= POCET_POLICOK)){
+            return true;
+        }
+    }
+    if (data->ID == 2) {
+        if ((!jeVDomceku) && (data->poziciePanacikov[panacik-1] >= 21) && (data->poziciePanacikov[panacik-1] + hod <= POCET_POLICOK - 20)){
+            return true;
+        }
+    }
+
 
 
     return false;
@@ -166,7 +198,7 @@ void citajVstupKonzola(DATA* data){
         //if (vstupKonzola < 7 && vstupKonzola > -1){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
-                zapisServerData(data, data->ID, 0, data->ID*4, 1);
+                zapisServerData(data, data->ID, 7, 1, 1);
                 data->koniecHry = true;
             } else {
                 int hod = hodKockou();
@@ -177,30 +209,45 @@ void citajVstupKonzola(DATA* data){
                     bool okVstupPanacik = false;
                     while (!okVstupPanacik){
                         int vstupPanacik;
+                        int vstupy[4] = {0};
                         printf("Ktorym panacikom sa chces posunut?\n");
                         if (data->ID == 1) {
                             for (int i = 1; i < 5; i++) {
-                                if (mozeHybatKonkretnymPanacikom(data, hod, i))
-                                    printf("%d - panacik\n", i);//SEM VYPIS IBA TYCH KTORYMI MOZES HADZAT
+                                if (mozeHybatKonkretnymPanacikom(data, hod, i)){
+                                    printf("%d - panacik %d\n", i, i);//SEM VYPIS IBA TYCH KTORYMI MOZES HADZAT
+                                    vstupy[i-1]=i;
+                                }
                             }
                             scanf("%d", &vstupPanacik);
-                            if (vstupPanacik > 0 && vstupPanacik < 5){
+                            for (int i = 0; i < 4; i++) {
+                                if (vstupy[i] == vstupPanacik) {
+                                    okVstupPanacik = true;
+                                    break;
+                                }
+                            }
+                            if (okVstupPanacik) {
                                 zapisServerData(data, data->ID, hod, vstupPanacik, 0);
-                                okVstupPanacik = true;
                             } else {
-                                printf("Neplany vstup, zadaj panacika od 1 po 4.\n");
+                                printf("Neplany vstup, zadaj panacika s ktorym mozes hybat.\n");
                             }
                         } else if (data->ID == 2){
                             for (int i = 5; i < 9; i++) {
-                                if (mozeHybatKonkretnymPanacikom(data, hod, i))
-                                    printf("%d - panacik\n", i);//SEM VYPIS IBA TYCH KTORYMI MOZES HADZAT
+                                if (mozeHybatKonkretnymPanacikom(data, hod, i)){
+                                    printf("%d - panacik %d\n", i, i);//SEM VYPIS IBA TYCH KTORYMI MOZES HADZAT
+                                    vstupy[i-5]=i;
+                                }
                             }
                             scanf("%d", &vstupPanacik);
-                            if (vstupPanacik > 4 && vstupPanacik < 9){
+                            for (int i = 0; i < 4; i++) {
+                                if (vstupy[i] == vstupPanacik) {
+                                    okVstupPanacik = true;
+                                    break;
+                                }
+                            }
+                            if (okVstupPanacik) {
                                 zapisServerData(data, data->ID, hod, vstupPanacik - 4, 0);
-                                okVstupPanacik = true;
                             } else {
-                                printf("Neplany vstup, zadaj panacika od 1 po 4.\n");
+                                printf("Neplany vstup, zadaj panacika s ktorym mozes hybat.\n");
                             }
                         }
                     }
@@ -240,19 +287,27 @@ void komunikacia(DATA* data) {
 
         //citanie spravy od servera
         precitajServerData(data);
+        printf("Moje ID je: %d\n", data->ID);
+        vypisNaKonzolu(data);
         //kontrola konca  hry
-        if (skontrolujVyhercu(data))
+        if (skontrolujVyhercu(data)){
+            data->koniecHry = true;
             break;
+        }
+
 
 
         //kym nie som na rade tak cakam
         while (data->ID != data->ktoJeNaRade){
+            printf("Pockaj, kym budes na rade.\n");
             //citanie spravy od servera
             precitajServerData(data);
+            vypisNaKonzolu(data);
             //kontrola konca  hry
-            if (skontrolujVyhercu(data))
+            if (skontrolujVyhercu(data)){
                 data->koniecHry = true;
-
+                break;
+            }
         }
 
         if (data->koniecHry)
@@ -260,7 +315,7 @@ void komunikacia(DATA* data) {
 
         printf("Teraz si na rade, tvoj vstup bude odoslany na server.\n");
 
-        //hadzem koockou a zapisujem to serveru
+        //uz som na rade tak hadzem kockou a zapisujem to serveru
         citajVstupKonzola(data);
     }
 }
@@ -288,7 +343,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Zvoleny host neexistuje!\n");
         return 2;
     }
-    printf("Pripojene na zvoleny host!\n");
 
     //urcenie adresy
     bzero((char*)&serverAdresa, sizeof(serverAdresa));
@@ -307,7 +361,6 @@ int main(int argc, char *argv[])
         perror("Chyba pri vytvarani socketu!");
         return 3;
     }
-    printf("Socket uspesne vytvoreny!\n");
 
     //pripojim sa na server
     if(connect(sock, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
@@ -315,7 +368,8 @@ int main(int argc, char *argv[])
         perror("Chyba pri pripajani sa do socketu!");
         return 4;
     }
-    printf("Socket uspesne pripojeny!\n");
+    printf("Uspesne pripojene na server, pockaj kym sa napoji potrebny pocet hracov!\n");
+
 
     //vytvorim datovu strukturu
     DATA pomData;
@@ -324,17 +378,12 @@ int main(int argc, char *argv[])
     pomData.n = n;
     pomData.sock = sock;
     pomData.vyherca = 0;
-    for (int i = 0; i < POCET_PANACIKOV; i++) {
-        pomData.poziciePanacikov[i] = 0;
+    for (int i = 0; i < VELKOST_HRACIEHO_POLA1; i++) {
+        pomData.hraciePole1[i] = '_';
     }
 
     //zacnem komunikaciu
     komunikacia(&pomData);
-
-    //pthread_t thread;
-    //pthread_create(&thread, NULL, &komunikacia, (void*) &pomData);
-
-    //pthread_join(thread, NULL);
 
     close(sock);
 
