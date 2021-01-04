@@ -4,6 +4,7 @@ int main(int argc, char * argv[])
 {
     pocetUsers = 0;
     userNaRade = 0;
+    koniecHodnota = 0;
     int poleFigurok[8] = {0};
     int polePomocne[4] = {0};
 
@@ -63,6 +64,7 @@ int main(int argc, char * argv[])
         pomData.n = n;
         pomData.onlineUsers = onlineUSers;
         pomData.userNaRade = &userNaRade;
+        poleData->koniecHodnota = koniecHodnota;
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 

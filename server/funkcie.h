@@ -15,6 +15,7 @@
 
 int pocetUsers;
 int userNaRade;
+int koniecHodnota;
 int sockfd;
 int cisloPortu;
 socklen_t cli_len;
@@ -32,9 +33,13 @@ typedef struct data {
     int n;
     int ID;
     int * userNaRade;
+    int koniecHodnota;
 } DATA;
 
 void* komunikacia(void* param);
-void kontrola(int hod, int figurka);
+void zapis(DATA *data);
+bool rezignaciaF(int kto, int rez, DATA * data);
+int logikaHryF(int kto, int hod, int fig, DATA * data, int prvy, int druhy);
+bool vyhodenieF(int kto, int fig, int akt, DATA * data);
 
 #endif //SERVER_FUNKCIE_H
