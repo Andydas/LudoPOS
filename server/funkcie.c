@@ -115,6 +115,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
                     data->poleFigurok[fig - 1] = 100;
                     printf("Hrac 1 - hodil kockou (%d) a figurka (%d) je na konci \n", hod, fig);
                     prvy++;
+                    printf("Hrac 1 - v cieli je %d. panacik\n", prvy);
                     if (prvy > 3)
                     {
                      data->koniecHodnota = 1;
@@ -150,6 +151,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
                     data->poleFigurok[(fig + 4) - 1] = 100;
                     printf("Hrac 2 - hodil kockou (%d) a figurka (%d) je na konci \n", hod, fig + 4);
                     druhy++;
+                    printf("Hrac 2 - v cieli je %d. panacik\n", druhy);
                     if (druhy > 3)
                     {
                         data->koniecHodnota = 2;
@@ -159,10 +161,10 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
                     data->pomocnePole[(fig) - 1] += hod;
                     printf("Pomocne pole figurky %d je %d\n", fig, data->pomocnePole[(fig) - 1]);
                     data->poleFigurok[(fig + 4) - 1] += hod;
-                    //
-                    if (data->pomocnePole[(fig) - 1] > 21 && data->poleFigurok[(fig + 4) - 1] > 21 && data->pomocnePole[(fig) - 1] <= 40)
+
+                    if (data->pomocnePole[(fig) - 1] >= 21 && data->poleFigurok[(fig + 4) - 1] > 21 && data->pomocnePole[(fig) - 1] <= 40)          //ked prejde cez 40
                     {
-                        data->poleFigurok[(fig + 4) - 1] -= 40;   //0
+                        data->poleFigurok[(fig + 4) - 1] -= 40;
                     }
 
                     if (data->pomocnePole[(fig) - 1] > 40)
@@ -186,7 +188,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
 bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
     if (kto == 1) {
         for (int i = 0; i < 8; i++) {
-            if (fig != i+1)
+            if (fig != i+1 && akt != 100)
             {
                 if (akt == data->poleFigurok[i])
                 {
@@ -198,7 +200,7 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
         }
     } else if (kto == 2) {
         for (int i = 0; i < 8; i++) {
-            if (fig+4 != i+1) {
+            if (fig+4 != i+1 && akt != 100) {
                 if (akt == data->poleFigurok[i]) {
                     data->poleFigurok[i] = 0;
                     printf("Hrac 2 - vyhodil panacika, konkretne figurku %d \n", i + 1);
