@@ -80,7 +80,7 @@ void zapis(DATA *data, int kto, int hod, int fig) {
 
         if (!data->zahral)
         {
-            buffZapisovanie[13] = -1;
+            buffZapisovanie[13] = 0;
         } else if (kto == 1 && data->zahral)
         {
             buffZapisovanie[13] = fig;
