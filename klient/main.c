@@ -291,16 +291,16 @@ void citajVstupKonzola(DATA* data){
         int vstupKonzola;
         scanf("%d", &vstupKonzola);
 
-        //if (vstupKonzola == 1 || vstupKonzola == 0){
-        if (vstupKonzola < 7 && vstupKonzola > -1){
+        if (vstupKonzola == 1 || vstupKonzola == 0){
+        //if (vstupKonzola < 7 && vstupKonzola > -1){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 7, 1, 1);
                 printf("Vzdal si sa PREHRAVAS\n");
                 data->koniecHry = true;
             } else {
-                //int hod = hodKockou();
-                int hod = vstupKonzola;
+                int hod = hodKockou();
+                //int hod = vstupKonzola;
                 printf("Hodil si kockou, hodil si: %d\n", hod);
                 //moze hybat??????????????????????????????????????????????????????????????
                 if (mozeHybatPanacikom(data, hod)){
