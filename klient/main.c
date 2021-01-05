@@ -79,9 +79,15 @@ void vypisNaKonzolu(DATA * data){
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
         }
     }*/
+    printf("----------------------- \n");
     printf("Minule kolo hral hrac %d \n", data->ktoCitanie);
     printf("Hodil %d \n", data->hodCitanie);
-    printf("Posunul panacika %d.\n",data->panacikCitanie);
+    if (data->panacikCitanie == -1){
+        printf("Neposunul ziadneho panacika\n");
+    } else {
+        printf("Posunul panacika %d.\n",data->panacikCitanie);
+    }
+    printf("\n");
 }
 
 void zapisDoHraciehoPola(DATA* data){
