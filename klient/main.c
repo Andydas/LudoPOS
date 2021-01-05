@@ -36,7 +36,7 @@ int hodKockou() {
     return 1+rand()%6;
 }
 
-void zobrazHraciePole(DATA * data){
+/*void zobrazHraciePole(DATA * data){
     //prvy riadok
     system("clear");
     printf("_________________________\n");
@@ -51,7 +51,7 @@ void zobrazHraciePole(DATA * data){
     printf("|  %c %c  |%c||%c||%c| CIEL  |\n",data->hraciePole[50],data->hraciePole[51],data->hraciePole[3],data->hraciePole[42],data->hraciePole[37]);
     printf("|  %c %c  |%c||%c||%c| 1: %c  |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->ciel1);
     printf(      "|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
-}
+}*/
 
 void vypisNaKonzolu(DATA * data){
     //kontrolny vypis komunikacie
@@ -265,7 +265,7 @@ bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
     if (data->ID == 2) {
         if ((!jeVDomceku) && (data->poziciePanacikov[panacik-1] >= 21) && (data->poziciePanacikov[panacik-1] + hod <= 50)){
             return true;
-        } else if ((data->poziciePanacikov[panacik-1] + hod <= 25)){
+        } else if ((data->poziciePanacikov[panacik-1] + hod <= 25 )){
             return true;
         }
     }
@@ -376,7 +376,7 @@ void komunikacia(DATA* data) {
         precitajServerData(data);
         printf("Moje ID je: %d\n", data->ID);
         vypisNaKonzolu(data);
-        zobrazHraciePole(data);
+        //zobrazHraciePole(data);
         //kontrola konca  hry
         if (skontrolujVyhercu(data)){
             data->koniecHry = true;
@@ -391,7 +391,7 @@ void komunikacia(DATA* data) {
             //citanie spravy od servera
             precitajServerData(data);
             vypisNaKonzolu(data);
-            zobrazHraciePole(data);
+            //zobrazHraciePole(data);
             //kontrola konca  hry
             if (skontrolujVyhercu(data)){
                 data->koniecHry = true;
