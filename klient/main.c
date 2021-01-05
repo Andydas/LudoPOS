@@ -42,27 +42,28 @@ int hodKockou() {
 void zobrazHraciePole(DATA * data){
     //prvy riadok
     system("clear");
-    printf("_________________________\n");
-    printf("|       |%c| %c |%c|       |\n",data->hraciePole[19],data->hraciePole[20],data->hraciePole[21]);
-    printf("| CIEL  |%c||%c||%c|  %c %c  |\n",data->hraciePole[18],data->hraciePole[46],data->hraciePole[22],data->hraciePole[54],data->hraciePole[55]);
-    printf("| 2: %c  |%c||%c||%c|  %c %c  |\n",data->ciel2,data->hraciePole[17],data->hraciePole[47],data->hraciePole[23],data->hraciePole[56],data->hraciePole[57]);
-    printf("|_______|%c||%c||%c|_______|\n",data->hraciePole[16],data->hraciePole[48],data->hraciePole[24]);
-    printf("|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[11],data->hraciePole[12],data->hraciePole[13],data->hraciePole[14],data->hraciePole[15],data->hraciePole[49],data->hraciePole[25],data->hraciePole[26],data->hraciePole[27],data->hraciePole[28],data->hraciePole[29]);
-    printf("|%c|___________________|%c|\n",data->hraciePole[10],data->hraciePole[30]);
-    printf("|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[9],data->hraciePole[8],data->hraciePole[7],data->hraciePole[6],data->hraciePole[5],data->hraciePole[44],data->hraciePole[35],data->hraciePole[34],data->hraciePole[33],data->hraciePole[32],data->hraciePole[31]);
-    printf("|       |%c||%c||%c|       |\n",data->hraciePole[4],data->hraciePole[43],data->hraciePole[36]);
-    printf("|  %c %c  |%c||%c||%c| CIEL  |\n",data->hraciePole[50],data->hraciePole[51],data->hraciePole[3],data->hraciePole[42],data->hraciePole[37]);
-    printf("|  %c %c  |%c||%c||%c| 1: %c  |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->ciel1);
-    printf("|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
+
+    printf("*************** HRA LUDO ***************\n");
+    printf("\t_________________________\n");
+    printf("\t|       |%c| %c |%c|       |\n",data->hraciePole[19],data->hraciePole[20],data->hraciePole[21]);
+    printf("\t| CIEL  |%c||%c||%c|  %c %c  |\n",data->hraciePole[18],data->hraciePole[46],data->hraciePole[22],data->hraciePole[54],data->hraciePole[55]);
+    printf("\t| 2: %c  |%c||%c||%c|  %c %c  |\n",data->ciel2,data->hraciePole[17],data->hraciePole[47],data->hraciePole[23],data->hraciePole[56],data->hraciePole[57]);
+    printf("\t|_______|%c||%c||%c|_______|\n",data->hraciePole[16],data->hraciePole[48],data->hraciePole[24]);
+    printf("\t|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[11],data->hraciePole[12],data->hraciePole[13],data->hraciePole[14],data->hraciePole[15],data->hraciePole[49],data->hraciePole[25],data->hraciePole[26],data->hraciePole[27],data->hraciePole[28],data->hraciePole[29]);
+    printf("\t|%c|___________________|%c|\n",data->hraciePole[10],data->hraciePole[30]);
+    printf("\t|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[9],data->hraciePole[8],data->hraciePole[7],data->hraciePole[6],data->hraciePole[5],data->hraciePole[44],data->hraciePole[35],data->hraciePole[34],data->hraciePole[33],data->hraciePole[32],data->hraciePole[31]);
+    printf("\t|       |%c||%c||%c|       |\n",data->hraciePole[4],data->hraciePole[43],data->hraciePole[36]);
+    printf("\t|  %c %c  |%c||%c||%c| CIEL  |\n",data->hraciePole[50],data->hraciePole[51],data->hraciePole[3],data->hraciePole[42],data->hraciePole[37]);
+    printf("\t|  %c %c  |%c||%c||%c| 1: %c  |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->ciel1);
+    printf("\t|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
+    printf("\n");
 }
 
 void vypisNaKonzolu(DATA * data){
     //kontrolny vypis komunikacie
-    system("clear");
-    printf("*************** HRA LUDO ***************\n");
     printf("Moje idcko je: %d\n", data->ID);
-    printf("Na rade je: %d\n", data->ktoJeNaRade);
-    printf("Vyherca je: %d\n", data->vyherca);
+    //printf("Na rade je: %d\n", data->ktoJeNaRade);
+    /*printf("Vyherca je: %d\n", data->vyherca);
     if (data->ID == 1) {
         for (int i = 0; i < 4; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
@@ -77,8 +78,10 @@ void vypisNaKonzolu(DATA * data){
         for (int i = 4; i < 8; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
         }
-    }
-    printf("Minule kolo hral hrac %d, hodil %d a posuval panacika %d.\n", data->ktoCitanie, data->hodCitanie, data->panacikCitanie);
+    }*/
+    printf("Minule kolo hral hrac %d \n", data->ktoCitanie);
+    printf("Hodil %d \n", data->hodCitanie);
+    printf("Posunul panacika %d.\n",data->panacikCitanie);
 }
 
 void zapisDoHraciehoPola(DATA* data){
@@ -199,18 +202,24 @@ void zapisServerData(DATA* data, int id, int hod, int panacik, int rezignacia){
 
 bool mozeHybatPanacikom(DATA* data, int hod){
     bool vsetciDomcek = true;
+    bool niektoDoma = false;
     if (data->ID == 1){
         //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 0; i < 4; i++) {
             if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
                 vsetciDomcek = false;
                 break;
+            } if (data->poziciePanacikov[i] == 0) {
+                niektoDoma = true;
             }
         }
         if (vsetciDomcek && hod == 6) {
             return true;
         } else if (vsetciDomcek && hod != 6){
             return false;
+        }
+        if (niektoDoma && hod ==6){
+            return true;
         }
 
 
