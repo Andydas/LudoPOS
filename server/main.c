@@ -7,6 +7,8 @@ int main(int argc, char * argv[])
     koniecHodnota = 0;
     int poleFigurok[8] = {0};
     int polePomocne[4] = {0};
+    int onlineUsers[3] = {0};
+    bool zahral = false;
 
     if (argc < 2)
     {
@@ -42,29 +44,30 @@ int main(int argc, char * argv[])
 
     for (int i = 0; i < 5; i++) {
         userIDs[i] = 0;
-        onlineUSers[i] = 0;
     }
 
-    while (pocetUsers < 3){
+    while (pocetUsers < 4){
         int socketKlient = accept(sockfd, (struct sockaddr *) &klientAdresa, &cli_len);
         if (socketKlient < 0) {
             perror("Chyba pri accepte" );
             return 3;
         }
         pocetUsers++;
+        onlineUSers[pocetUsers - 1] = 1;
         bzero(buffer,256);
 
         DATA pomData;
-        onlineUSers[pocetUsers - 1] = 1;
+
 
         pomData.socketKlient = socketKlient;
         pomData.poleFigurok = poleFigurok;
         pomData.pomocnePole = polePomocne;
+        pomData.onlineUsers = onlineUSers;
         pomData.ID = pocetUsers;
         pomData.n = n;
-        pomData.onlineUsers = onlineUSers;
         pomData.userNaRade = &userNaRade;
         poleData->koniecHodnota = koniecHodnota;
+        pomData.zahral = &zahral;
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 

@@ -34,11 +34,12 @@ typedef struct data {
     int ID;
     int * userNaRade;
     int koniecHodnota;
+    bool zahral;
 } DATA;
 
 void* komunikacia(void* param);
-void zapis(DATA *data);
-bool rezignaciaF(int kto, int rez, DATA * data);
+void zapis(DATA *data, int kto, int hod, int fig);
+bool rezignaciaF(int kto, int hod, int fig, int rez, DATA * data);
 int logikaHryF(int kto, int hod, int fig, DATA * data, int prvy, int druhy);
 bool vyhodenieF(int kto, int fig, int akt, DATA * data);
 
