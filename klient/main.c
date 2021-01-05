@@ -23,6 +23,9 @@ typedef struct data{
     int sock;
     int n;
     int vyherca;
+    int ktoCitanie;
+    int hodCitanie;
+    int panacikCitanie;
     int poziciePanacikov[POCET_PANACIKOV];
     char buffCitanie[VELKOST_BUFFER];
     char buffZapisovanie[VELKOST_BUFFER];
@@ -36,7 +39,7 @@ int hodKockou() {
     return 1+rand()%6;
 }
 
-/*void zobrazHraciePole(DATA * data){
+void zobrazHraciePole(DATA * data){
     //prvy riadok
     system("clear");
     printf("_________________________\n");
@@ -50,8 +53,8 @@ int hodKockou() {
     printf("|       |%c||%c||%c|       |\n",data->hraciePole[4],data->hraciePole[43],data->hraciePole[36]);
     printf("|  %c %c  |%c||%c||%c| CIEL  |\n",data->hraciePole[50],data->hraciePole[51],data->hraciePole[3],data->hraciePole[42],data->hraciePole[37]);
     printf("|  %c %c  |%c||%c||%c| 1: %c  |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->ciel1);
-    printf(      "|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
-}*/
+    printf("|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
+}
 
 void vypisNaKonzolu(DATA * data){
     //kontrolny vypis komunikacie
@@ -59,6 +62,7 @@ void vypisNaKonzolu(DATA * data){
     printf("*************** HRA LUDO ***************\n");
     printf("Moje idcko je: %d\n", data->ID);
     printf("Na rade je: %d\n", data->ktoJeNaRade);
+    printf("Vyherca je: %d\n", data->vyherca);
     if (data->ID == 1) {
         for (int i = 0; i < 4; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
@@ -74,6 +78,7 @@ void vypisNaKonzolu(DATA * data){
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
         }
     }
+    printf("Minule kolo hral hrac %d, hodil %d a posuval panacika %d.\n", data->ktoCitanie, data->hodCitanie, data->panacikCitanie);
 }
 
 void zapisDoHraciehoPola(DATA* data){
@@ -153,6 +158,9 @@ void precitajServerData(DATA* data){
     //zapisem si co som precital
     data->ID = data->buffCitanie[0];
     data->ktoJeNaRade = data->buffCitanie[1];
+    data->ktoCitanie = data->buffCitanie[11];
+    data->hodCitanie = data->buffCitanie[12];
+    data->panacikCitanie = data->buffCitanie[13];
     //zapis pozicii panacikov do pola
     data->ciel1=48; //cislo 0 v ascii
     data->ciel2=48; //cislo 0 v ascii
@@ -215,7 +223,7 @@ bool mozeHybatPanacikom(DATA* data, int hod){
     } else  if (data->ID == 2){
         //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 4; i < 8; i++) {
-            if (data->poziciePanacikov[i] > 0) {
+            if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
                 vsetciDomcek = false;
                 break;
             }
@@ -238,6 +246,7 @@ bool mozeHybatPanacikom(DATA* data, int hod){
     return false;
 }
 
+//kontrola, ci sa moze hybat konkretnym panacikom
 bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
 
     bool jeVDomceku = true;
@@ -272,12 +281,13 @@ bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
     return false;
 }
 
+//citanie vstupu od uzivatela a nasledne zapisovanie serveru
 void citajVstupKonzola(DATA* data){
     bool okVstup = false;
     while (!okVstup){
-        printf("Co si zelas spravit?\n");
         printf("1 - hod kockou\n");
         printf("0 - vzdaj sa \n");
+        printf("HRAC %d, co si zelas spravit?: ",data->ID);
         int vstupKonzola;
         scanf("%d", &vstupKonzola);
 
@@ -286,6 +296,7 @@ void citajVstupKonzola(DATA* data){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 7, 1, 1);
+                printf("Vzdal si sa PREHRAVAS\n");
                 data->koniecHry = true;
             } else {
                 //int hod = hodKockou();
@@ -375,8 +386,8 @@ void komunikacia(DATA* data) {
         //citanie spravy od servera
         precitajServerData(data);
         printf("Moje ID je: %d\n", data->ID);
+        zobrazHraciePole(data);
         vypisNaKonzolu(data);
-        //zobrazHraciePole(data);
         //kontrola konca  hry
         if (skontrolujVyhercu(data)){
             data->koniecHry = true;
@@ -390,8 +401,8 @@ void komunikacia(DATA* data) {
             printf("Pockaj, kym budes na rade.\n");
             //citanie spravy od servera
             precitajServerData(data);
+            zobrazHraciePole(data);
             vypisNaKonzolu(data);
-            //zobrazHraciePole(data);
             //kontrola konca  hry
             if (skontrolujVyhercu(data)){
                 data->koniecHry = true;
@@ -399,86 +410,120 @@ void komunikacia(DATA* data) {
             }
         }
 
-        if (data->koniecHry)
+        if (data->koniecHry){
             break;
+        }
+
 
         printf("Teraz si na rade, tvoj vstup bude odoslany na server.\n");
 
         //uz som na rade tak hadzem kockou a zapisujem to serveru
         citajVstupKonzola(data);
+
     }
+}
+
+void zobrazPravidla(){
+    printf("\n");
+    printf("************** PRAVIDLA HRY LUDO ***************\n");
+    printf("Hra je pre 2 hracov\n");
+    printf("Kym ma hrac vsetkych panacikov v domceku, musi hodit 6 aby nejakeho postavil na hraciu plochu\n");
+    printf("Na jednom policku sa v jednom momente moze nachadzat len jeden panacik\n");
+    printf("Ak chce hrac postavit panacika na policko, kde uz je nejaky iny panacik, tohto panacika vyhodi, ci uz je jeho alebo nie\n");
+    printf("Hra sa konci ked sa jeden z hracov vzda alebo ma jeden z hracov vsetkych panacikov v cieli\n");
+    printf("\n");
 }
 
 
 int main(int argc, char *argv[])
-{
-    DATA pomData;
+{    bool vstupOK = false;
+    int vstup;
+    while (!vstupOK) {
+        printf("VITAJ V APLIKACII LUDO\n");
+        printf("1 - Pripoj na server\n");
+        printf("2 - Zobraz pravidla\n");
+        printf("0 - Vypni aplikaciu\n");
+        printf("Co chces urobit?: ");
+        scanf("%d", &vstup);
+        if (vstup >= 0 && vstup <= 2){
+            if (vstup == 2) {
+                zobrazPravidla();
+                vstup = false;
+            } else if (vstup == 0) {
+                return 0;
+            } else {
+                DATA pomData;
 
-    srand(time(NULL));
-    int sock;
-    int n;
-    struct sockaddr_in serverAdresa;
-    struct hostent* server;
+                srand(time(NULL));
+                int sock;
+                int n;
+                struct sockaddr_in serverAdresa;
+                struct hostent* server;
 
-    //kontrolujem pocet argumentov
-    if (argc < 3)
-    {
-        fprintf(stderr,"Malo argumentov!\n", argv[0]);
-        return 1;
+                //kontrolujem pocet argumentov
+                if (argc < 3)
+                {
+                    fprintf(stderr,"Malo argumentov!\n", argv[0]);
+                    return 1;
+                }
+
+                //ziskam meno servera
+                server = gethostbyname(argv[1]);
+                if (server == NULL)
+                {
+                    fprintf(stderr, "Zvoleny host neexistuje!\n");
+                    return 2;
+                }
+
+                //urcenie adresy
+                bzero((char*)&serverAdresa, sizeof(serverAdresa));
+                serverAdresa.sin_family = AF_INET;
+                bcopy(
+                        (char*)server->h_addr,
+                        (char*)&serverAdresa.sin_addr.s_addr,
+                        server->h_length
+                );
+                serverAdresa.sin_port = htons(atoi(argv[2]));
+
+                //vytvorim tcp socket
+                sock = socket(AF_INET, SOCK_STREAM, 0);
+                if (sock < 0)
+                {
+                    perror("Chyba pri vytvarani socketu!");
+                    return 3;
+                }
+
+                //pripojim sa na server
+                if(connect(sock, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
+                {
+                    perror("Chyba pri pripajani sa do socketu!");
+                    return 4;
+                }
+                printf("Uspesne pripojene na server, pockaj kym sa napoji potrebny pocet hracov!\n");
+
+
+                //vytvorim datovu strukturu
+                pomData.koniecHry = false;
+                pomData.ID = -1;
+                pomData.n = n;
+                pomData.sock = sock;
+                pomData.vyherca = 0;
+                for (int i = 0; i < VELKOST_HRACIEHO_POLA; i++) {
+                    pomData.hraciePole[i] = 95;
+                }
+
+
+                //zacnem komunikaciu
+                komunikacia(&pomData);
+
+                close(sock);
+
+                return 0;
+            }
+
+        }
     }
 
-    //ziskam meno servera
-    server = gethostbyname(argv[1]);
-    if (server == NULL)
-    {
-        fprintf(stderr, "Zvoleny host neexistuje!\n");
-        return 2;
-    }
-
-    //urcenie adresy
-    bzero((char*)&serverAdresa, sizeof(serverAdresa));
-    serverAdresa.sin_family = AF_INET;
-    bcopy(
-            (char*)server->h_addr,
-                (char*)&serverAdresa.sin_addr.s_addr,
-                server->h_length
-    );
-    serverAdresa.sin_port = htons(atoi(argv[2]));
-
-    //vytvorim tcp socket
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-        perror("Chyba pri vytvarani socketu!");
-        return 3;
-    }
-
-    //pripojim sa na server
-    if(connect(sock, (struct sockaddr*)&serverAdresa, sizeof(serverAdresa)) < 0)
-    {
-        perror("Chyba pri pripajani sa do socketu!");
-        return 4;
-    }
-    printf("Uspesne pripojene na server, pockaj kym sa napoji potrebny pocet hracov!\n");
-
-
-    //vytvorim datovu strukturu
-    pomData.koniecHry = false;
-    pomData.ID = -1;
-    pomData.n = n;
-    pomData.sock = sock;
-    pomData.vyherca = 0;
-    for (int i = 0; i < VELKOST_HRACIEHO_POLA; i++) {
-        pomData.hraciePole[i] = 95;
-    }
-
-
-    //zacnem komunikaciu
-    komunikacia(&pomData);
-
-    close(sock);
-
-    return 0;
 }
 
 
