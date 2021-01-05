@@ -27,6 +27,8 @@ typedef struct data{
     char buffCitanie[VELKOST_BUFFER];
     char buffZapisovanie[VELKOST_BUFFER];
     char hraciePole[VELKOST_HRACIEHO_POLA];
+    int ciel1;
+    int ciel2;
 } DATA;
 
 
@@ -40,14 +42,14 @@ void zobrazHraciePole(DATA * data){
     printf("_________________________\n");
     printf("|       |%c| %c |%c|       |\n",data->hraciePole[19],data->hraciePole[20],data->hraciePole[21]);
     printf("| CIEL  |%c||%c||%c|  %c %c  |\n",data->hraciePole[18],data->hraciePole[46],data->hraciePole[22],data->hraciePole[54],data->hraciePole[55]);
-    printf("|  2: %c |%c||%c||%c|  %c %c  |\n",data->hraciePole[52],data->hraciePole[17],data->hraciePole[47],data->hraciePole[23],data->hraciePole[56],data->hraciePole[57]);
+    printf("| 2: %c  |%c||%c||%c|  %c %c  |\n",data->ciel2,data->hraciePole[17],data->hraciePole[47],data->hraciePole[23],data->hraciePole[56],data->hraciePole[57]);
     printf("|_______|%c||%c||%c|_______|\n",data->hraciePole[16],data->hraciePole[48],data->hraciePole[24]);
     printf("|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[11],data->hraciePole[12],data->hraciePole[13],data->hraciePole[14],data->hraciePole[15],data->hraciePole[49],data->hraciePole[25],data->hraciePole[26],data->hraciePole[27],data->hraciePole[28],data->hraciePole[29]);
     printf("|%c|___________________|%c|\n",data->hraciePole[10],data->hraciePole[30]);
     printf("|%c|%c|%c|%c|%c||%c||%c|%c|%c|%c|%c|\n",data->hraciePole[9],data->hraciePole[8],data->hraciePole[7],data->hraciePole[6],data->hraciePole[5],data->hraciePole[44],data->hraciePole[35],data->hraciePole[34],data->hraciePole[33],data->hraciePole[32],data->hraciePole[31]);
     printf("|       |%c||%c||%c|       |\n",data->hraciePole[4],data->hraciePole[43],data->hraciePole[36]);
     printf("|  %c %c  |%c||%c||%c| CIEL  |\n",data->hraciePole[50],data->hraciePole[51],data->hraciePole[3],data->hraciePole[42],data->hraciePole[37]);
-    printf("|  %c %c  |%c||%c||%c|  1: %c |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->hraciePole[51]);
+    printf("|  %c %c  |%c||%c||%c| 1: %c  |\n",data->hraciePole[52],data->hraciePole[53],data->hraciePole[2],data->hraciePole[41],data->hraciePole[38],data->ciel1);
     printf(      "|_______|%c| %c |%c|_______|\n",data->hraciePole[1],data->hraciePole[40],data->hraciePole[39]);
 }
 
@@ -75,55 +77,71 @@ void vypisNaKonzolu(DATA * data){
 }
 
 void zapisDoHraciehoPola(DATA* data){
+    for (int j = 0; j < 59; j++) {
+        data->hraciePole[j] = 95;
+    }
     for (int i = 0; i < POCET_PANACIKOV; i++) {
         if (data->poziciePanacikov[i] == 0){
-            switch (i+1) {
-                case 1:
+            switch (i) {
+                case 0:
                     data->hraciePole[50] = i+1+48;
-                case 2:
+                    break;
+                case 1:
                     data->hraciePole[51] = i+1+48;
-                case 3:
+                    break;
+                case 2:
                     data->hraciePole[52] = i+1+48;
-                case 4:
+                    break;
+                case 3:
                     data->hraciePole[53] = i+1+48;
-                case 5:
+                    break;
+                case 4:
                     data->hraciePole[54] = i+1+48;
-                case 6:
+                    break;
+                case 5:
                     data->hraciePole[55] = i+1+48;
-                case 7:
+                    break;
+                case 6:
                     data->hraciePole[56] = i+1+48;
-                case 8:
+                    break;
+                case 7:
                     data->hraciePole[57] = i+1+48;
+                    break;
             }
         } else {
-            switch (i+1) {
-                case 1:
-                    data->hraciePole[50] = 95;
-                case 2:
-                    data->hraciePole[51] = 95;
-                case 3:
-                    data->hraciePole[52] = 95;
-                case 4:
-                    data->hraciePole[53] = 95;
-                case 5:
-                    data->hraciePole[54] = 95;
-                case 6:
-                    data->hraciePole[55] = 95;
-                case 7:
-                    data->hraciePole[56] = 95;
-                case 8:
-                    data->hraciePole[57] = 95;
-            }
 
+            switch (i) {
+                case 0:
+                    data->hraciePole[50] = 95;
+                    break;
+                case 1:
+                    data->hraciePole[51] = 95;
+                    break;
+                case 2:
+                    data->hraciePole[52] = 95;
+                    break;
+                case 3:
+                    data->hraciePole[53] = 95;
+                    break;
+                case 4:
+                    data->hraciePole[54] = 95;
+                    break;
+                case 5:
+                    data->hraciePole[55] = 95;
+                    break;
+                case 6:
+                    data->hraciePole[56] = 95;
+                    break;
+                case 7:
+                    data->hraciePole[57] = 95;
+                    break;
+            }
             for (int j = 0; j < 59; j++) {
                 if (data->poziciePanacikov[i] == j){
-                    data->hraciePole[j] = i+1+49;
-                } else {
-                    data->hraciePole[j] = 95;
+                    data->hraciePole[j] = i+1+48;
                 }
             }
         }
-
     }
 }
 
@@ -136,8 +154,17 @@ void precitajServerData(DATA* data){
     data->ID = data->buffCitanie[0];
     data->ktoJeNaRade = data->buffCitanie[1];
     //zapis pozicii panacikov do pola
+    data->ciel1=48; //cislo 0 v ascii
+    data->ciel2=48; //cislo 0 v ascii
     for (int i = 0; i < POCET_PANACIKOV; i++) {
         data->poziciePanacikov[i] = data->buffCitanie[i+2];
+        if (data->poziciePanacikov[i] == 100){
+            if (i < 4){
+                data->ciel1++;
+            } else {
+                data->ciel2++;
+            }
+        }
     }
     data->vyherca = data->buffCitanie[10];
     zapisDoHraciehoPola(data);
@@ -167,7 +194,7 @@ bool mozeHybatPanacikom(DATA* data, int hod){
     if (data->ID == 1){
         //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 0; i < 4; i++) {
-            if (data->poziciePanacikov[i] > 0) {
+            if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
                 vsetciDomcek = false;
                 break;
             }
@@ -203,7 +230,7 @@ bool mozeHybatPanacikom(DATA* data, int hod){
         for (int i = 4; i < 8; i++) {
             if ((!vsetciDomcek) && (data->poziciePanacikov[i] >= 21) && (data->poziciePanacikov[i] + hod <= 50)){
                 return true;
-            } else if ((data->poziciePanacikov[i] + hod <= 25)){
+            } else if ((data->poziciePanacikov[i] + hod <= 25) && (data->poziciePanacikov[i] != 0)){
                 return true;
             }
         }
@@ -254,15 +281,15 @@ void citajVstupKonzola(DATA* data){
         int vstupKonzola;
         scanf("%d", &vstupKonzola);
 
-        if (vstupKonzola == 1 || vstupKonzola == 0){
-        //if (vstupKonzola < 7 && vstupKonzola > -1){
+        //if (vstupKonzola == 1 || vstupKonzola == 0){
+        if (vstupKonzola < 7 && vstupKonzola > -1){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 7, 1, 1);
                 data->koniecHry = true;
             } else {
-                int hod = hodKockou();
-                //int hod = vstupKonzola;
+                //int hod = hodKockou();
+                int hod = vstupKonzola;
                 printf("Hodil si kockou, hodil si: %d\n", hod);
                 //moze hybat??????????????????????????????????????????????????????????????
                 if (mozeHybatPanacikom(data, hod)){
