@@ -17,15 +17,25 @@ void* komunikacia(void * param) {
     *data->userNaRade = 1;
 
     while (*data->koniecHry != 1) {
+        printf("Vlakno %d caka na zablokovanie metexiku\n", data->socketKlient);
         pthread_mutex_lock(data->mut);
+        if (*data->koniecHry == 1){
+            pthread_mutex_unlock(data->mut);
+            printf("Zatvaram socket %d\n", data->socketKlient);
+            close(data->socketKlient);
+            return NULL;
+        }
+        printf("Vlakno %d zamklo mutexik\n", data->socketKlient);
         if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
         {
             printf("Zakaznik 1 bude cakat  a vlakno %d\n", data->socketKlient - 3);
             pthread_cond_wait(data->prve, data->mut);
+            printf("Zakaznik 1 sa zobudinkal a vlakno %d\n", data->socketKlient - 3);
         } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
         {
             printf("Zakaznik 2 bude cakat a vlakno %d\n", data->socketKlient - 3);
             pthread_cond_wait(data->druhe, data->mut);
+            printf("Zakaznik 2 sa zobudinkal a vlakno %d\n", data->socketKlient - 3);
         }
         vyhodil = false;
         if (pocetUsers >= 2) {
@@ -35,11 +45,13 @@ void* komunikacia(void * param) {
             {
                 printf("Zakaznik 1 bude cakat else contin a vlakno %d\n", data->socketKlient - 3);
 
+                printf("Signal 1\n");
                 pthread_cond_signal(data->druhe);
             } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
             {
                 printf("Zakaznik 2 bude cakat else contin a vlakno %d\n", data->socketKlient - 3);
 
+                printf("Signal 2\n");
                 pthread_cond_signal(data->prve);
             }
             pthread_mutex_unlock(data->mut);
@@ -53,10 +65,13 @@ void* komunikacia(void * param) {
             perror("Nepodarilo sa nacitat zo socketu");
             printf ("Zatvaram socket Brano povedal nieco ze po zlom citanji%d \n", data->socketKlient - 3);
             if (data->socketKlient == 4) {
+                printf("Signal 3\n");
                 pthread_cond_signal(data->druhe);
             } else {
+                printf("Signal 4\n");
                 pthread_cond_signal(data->prve);
             }
+            pthread_mutex_unlock(data->mut);
             close(data->socketKlient);
             return NULL;
         }
@@ -94,11 +109,13 @@ void* komunikacia(void * param) {
         {
             printf("Zakaznik 1 bude cakat na konci a vlakno %d\n", data->socketKlient - 3);
 
+            printf("Signal 5\n");
             pthread_cond_signal(data->druhe);
         } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
         {
             printf("Zakaznik 2 bude cakat na konci a vlakno %d\n", data->socketKlient - 3);
 
+            printf("Signal 6\n");
             pthread_cond_signal(data->prve);
         }
         pthread_mutex_unlock(data->mut);
@@ -106,10 +123,15 @@ void* komunikacia(void * param) {
 
     printf ("Zatvaram socket %d \n", data->socketKlient - 3);
     if (data->socketKlient == 4) {
+        printf("Signal 7\n");
+        printf("Koniec hry je: %d\n", *data->koniecHry);
         pthread_cond_signal(data->druhe);
     } else {
+        printf("Koniec hry je: %d\n", *data->koniecHry);
+        printf("Signal 8\n");
         pthread_cond_signal(data->prve);
     }
+    pthread_mutex_unlock(data->mut);
     close(data->socketKlient);
     return NULL;
 }
@@ -117,6 +139,7 @@ void* komunikacia(void * param) {
 void zapis(DATA *data, int kto, int hod, int fig) {
 
     char buffZapisovanie[256];
+    bzero(buffZapisovanie, 256);
     for (int i = 1; i <= pocetUsers; i++) {
         buffZapisovanie[0] = i;
         buffZapisovanie[1] = *data->userNaRade;

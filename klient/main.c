@@ -423,10 +423,10 @@ void komunikacia(DATA* data) {
         zobrazHraciePole(data);
         vypisNaKonzolu(data);
         //kontrola konca  hry
-        if (skontrolujVyhercu(data)){
+        /*if (skontrolujVyhercu(data)){
             data->koniecHry = true;
             break;
-        }
+        }*/
 
 
 
