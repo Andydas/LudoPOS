@@ -2,80 +2,62 @@
 
 void* komunikacia(void * param) {
     DATA* data = (DATA*) param;
-    //bool koniec = false;
     bool vyhodil = false;
     int ktoHral = 0;
     int hodKockou = 0;
     int ktoraFigurka = 0;
     int aktualnaPozicka = 0;
     int rezignacia = 0;
-    int prvy = 0;
-    int druhy = 0;
-    data->koniecHodnota = 0;
+    data->vitaz = 0;
     data->zahral = false;
-    char buffCitanie[256];
-    *data->userNaRade = 1;
+    char buffCitanie[BUFF_SIZE];
+    *data->userNaRade = HRAC_1;
 
     while (*data->koniecHry != 1) {
-        printf("Vlakno %d caka na zablokovanie metexiku\n", data->socketKlient);
+
         pthread_mutex_lock(data->mut);
         if (*data->koniecHry == 1){
             pthread_mutex_unlock(data->mut);
-            printf("Zatvaram socket %d\n", data->socketKlient);
             close(data->socketKlient);
             return NULL;
         }
-        printf("Vlakno %d zamklo mutexik\n", data->socketKlient);
-        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
+        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
         {
-            printf("Zakaznik 1 bude cakat  a vlakno %d\n", data->socketKlient - 3);
             pthread_cond_wait(data->prve, data->mut);
-            printf("Zakaznik 1 sa zobudinkal a vlakno %d\n", data->socketKlient - 3);
-        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
+        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_2)
         {
-            printf("Zakaznik 2 bude cakat a vlakno %d\n", data->socketKlient - 3);
             pthread_cond_wait(data->druhe, data->mut);
-            printf("Zakaznik 2 sa zobudinkal a vlakno %d\n", data->socketKlient - 3);
         }
+
         vyhodil = false;
-        if (pocetUsers >= 2) {
-                zapis(data, ktoHral, hodKockou, ktoraFigurka);
+
+        if (pocetUsers >= MAX_POCET_HRACOV) {
+            zapis(data, ktoHral, hodKockou, ktoraFigurka);
         } else {
-            if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
+            if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
             {
-                printf("Zakaznik 1 bude cakat else contin a vlakno %d\n", data->socketKlient - 3);
-
-                printf("Signal 1\n");
                 pthread_cond_signal(data->druhe);
-            } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
+            } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_2)
             {
-                printf("Zakaznik 2 bude cakat else contin a vlakno %d\n", data->socketKlient - 3);
-
-                printf("Signal 2\n");
                 pthread_cond_signal(data->prve);
             }
             pthread_mutex_unlock(data->mut);
             continue;
-
         }
 
-        bzero(buffCitanie, 256);
-        data->n = read(*data->userNaRade + 3, buffCitanie, 255);
+        bzero(buffCitanie, BUFF_SIZE);
+        data->n = read(*data->userNaRade + 3, buffCitanie, BUFF_SIZE - 1);
         if (data->n < 0) {
             perror("Nepodarilo sa nacitat zo socketu");
-            printf ("Zatvaram socket Brano povedal nieco ze po zlom citanji%d \n", data->socketKlient - 3);
-            if (data->socketKlient == 4) {
-                printf("Signal 3\n");
+            if (data->socketKlient == SOCKET_ID_1) {
                 pthread_cond_signal(data->druhe);
             } else {
-                printf("Signal 4\n");
                 pthread_cond_signal(data->prve);
             }
             pthread_mutex_unlock(data->mut);
             close(data->socketKlient);
             return NULL;
         }
-        printf("Sprava od hraca %d:\n", buffCitanie[0]);
         ktoHral = buffCitanie[0];
         hodKockou = buffCitanie[1];
         ktoraFigurka = buffCitanie[2];
@@ -83,56 +65,38 @@ void* komunikacia(void * param) {
 
         *data->koniecHry = rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
 
-        aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data, prvy, druhy);
-
         if (*data->koniecHry != 1)
         {
+            aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data);
+            if (*data->koniecHry != 1) {
+                vyhodil = vyhodenieF(ktoHral, ktoraFigurka, aktualnaPozicka, data);
 
-            //kontrola vyhodenia panacika
-            vyhodil = vyhodenieF(ktoHral, ktoraFigurka, aktualnaPozicka, data);
-
-
-            if (hodKockou != 6) {
-                if (!vyhodil) {
-                    if (pocetUsers == ktoHral ) {                           //&& data->onlineUsers[0] == 1
-                        *data->userNaRade = 1;
-                        if (!(data->koniecHry))
-                            printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
-                    } else  {                                               //data->onlineUsers[1] == 1
-                        *data->userNaRade = 2;
-                        if (!(data->koniecHry))
-                            printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
+                if (hodKockou != 6) {
+                    if (!vyhodil) {
+                        if (pocetUsers == ktoHral) {
+                            *data->userNaRade = HRAC_1;
+                        } else {
+                            *data->userNaRade = HRAC_2;
+                        }
                     }
                 }
+            } else {
+                zapis(data, ktoHral, hodKockou, ktoraFigurka);
             }
-        } else {
-            printf("Signal 87\n");
-            zapis(data, ktoHral, hodKockou, ktoraFigurka);
         }
-        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
+        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
         {
-            printf("Zakaznik 1 bude cakat na konci a vlakno %d\n", data->socketKlient - 3);
-
-            printf("Signal 5\n");
             pthread_cond_signal(data->druhe);
-        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
+        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_2)
         {
-            printf("Zakaznik 2 bude cakat na konci a vlakno %d\n", data->socketKlient - 3);
-
-            printf("Signal 6\n");
             pthread_cond_signal(data->prve);
         }
         pthread_mutex_unlock(data->mut);
     }
 
-    printf ("Zatvaram socket %d \n", data->socketKlient - 3);
-    if (data->socketKlient == 4) {
-        printf("Signal 7\n");
-        printf("Koniec hry je: %d\n", *data->koniecHry);
+    if (data->socketKlient == SOCKET_ID_1) {
         pthread_cond_signal(data->druhe);
     } else {
-        printf("Koniec hry je: %d\n", *data->koniecHry);
-        printf("Signal 8\n");
         pthread_cond_signal(data->prve);
     }
     pthread_mutex_unlock(data->mut);
@@ -141,9 +105,8 @@ void* komunikacia(void * param) {
 }
 
 void zapis(DATA *data, int kto, int hod, int fig) {
-
-    char buffZapisovanie[256];
-    bzero(buffZapisovanie, 256);
+    char buffZapisovanie[BUFF_SIZE];
+    bzero(buffZapisovanie, BUFF_SIZE);
     for (int i = 1; i <= pocetUsers; i++) {
         buffZapisovanie[0] = i;
         buffZapisovanie[1] = *data->userNaRade;
@@ -156,7 +119,7 @@ void zapis(DATA *data, int kto, int hod, int fig) {
         buffZapisovanie[7] = data->poleFigurok[5];       //6
         buffZapisovanie[8] = data->poleFigurok[6];       //7
         buffZapisovanie[9] = data->poleFigurok[7];       //8
-        buffZapisovanie[10] = data->koniecHodnota;
+        buffZapisovanie[10] = data->vitaz;
         buffZapisovanie[11] = kto;
         buffZapisovanie[12] = hod;
 
@@ -170,8 +133,7 @@ void zapis(DATA *data, int kto, int hod, int fig) {
             buffZapisovanie[13] = fig + 4;
         }
 
-
-        data->n = write(i + 3, buffZapisovanie, 255);
+        data->n = write(i + 3, buffZapisovanie, BUFF_SIZE - 1);
         if (data->n < 0) {
             perror("Nepodarilo sa nacitat do socketu");
         }
@@ -180,18 +142,16 @@ void zapis(DATA *data, int kto, int hod, int fig) {
 
 int rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
 
-    if (kto == 1 && rez == 1)
+    if (kto == HRAC_1 && rez == 1)
     {
-        data->onlineUsers[kto - 1] = 0;
-        data->koniecHodnota = 2;
+        data->vitaz = HRAC_2;
         printf("Hrac 2 vyhrava, hrac 1 sa odpojil \n");
         zapis(data, kto, hod, fig);
         return 1;
     }
-    else if (kto == 2 && rez == 1)
+    else if (kto == HRAC_2 && rez == 1)
     {
-        data->onlineUsers[kto - 1] = 0;
-        data->koniecHodnota = 1;
+        data->vitaz = HRAC_1;
         printf("Hrac 1 vyhrava, hrac 2 sa odpojil \n");
         zapis(data, kto, hod, fig);
         return 1;
@@ -200,82 +160,65 @@ int rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
     }
 }
 
-int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
-    if (kto == 1) {
+int logikaHryF(int kto, int hod, int fig, DATA *data) {
+    int prvyCiel = 0;
+    int druhyCiel = 0;
+    if (kto == HRAC_1) {
         if (data->poleFigurok[fig - 1] == 0 && hod == 6) {
             data->poleFigurok[fig - 1] += 1;
-            printf("Hrac 1  - hodil kockou (%d) vychadza z domceka a posuva figurkou (%d) \n", hod , fig);
             data->zahral = true;
         } else if (data->poleFigurok[fig - 1] == 0 && hod != 6) {
-            printf("Hrac 1 - sa nepohol nikam \n");
             data->zahral = false;
         } else {
-            if (data->poleFigurok[fig - 1] + hod <= 45) {
-                if (data->poleFigurok[fig - 1] + hod == 45) {
-                    data->poleFigurok[fig - 1] = 100;
-                    printf("Hrac 1 - hodil kockou (%d) a figurka (%d) je na konci \n", hod, fig);
+            if (data->poleFigurok[fig - 1] + hod <= HRACIA_PLOCHA_STROP) {
+                if (data->poleFigurok[fig - 1] + hod == HRACIA_PLOCHA_STROP) {
+                    data->poleFigurok[fig - 1] = CIEL_HODNOTA;
                     data->zahral = true;
                     for (int i = 0; i < 4; i++) {
-                        if (data->poleFigurok[i] == 100){
-                            prvy += 1;
+                        if (data->poleFigurok[i] == CIEL_HODNOTA){
+                            prvyCiel += 1;
                         }
                     }
-
-                    printf("Hrac 1 - v cieli je %d. panacik\n", prvy);
-                    if (prvy > 3)
+                    if (prvyCiel > 3)
                     {
-                     data->koniecHodnota = 1;
-                     *data->koniecHry = 1;
-                    }
-                } else {
-                    data->poleFigurok[fig - 1] += hod;
-                    printf("Hrac 1 - hodil kockou (%d) a a posuva figurkou (%d) \n", hod, fig);
-                    data->zahral = true;
-                }
-            } else {
-                printf("Hrac 1 - preskocil si domcek, hodil si kockou (%d) \n", hod);
-            }
-        }
-            return data->poleFigurok[fig - 1];
-
-    } else if (kto == 2) {
-        if (data->poleFigurok[(fig + 4) - 1] == 0 && hod == 6) {
-            data->poleFigurok[(fig + 4) - 1] += 21;
-            printf("Hrac 2  - hodil kockou (%d) vychadza z domceka a posuva figurkou (%d) \n", hod , fig + 4);
-            data->pomocnePole[(fig) - 1] += 1;
-            printf("Pomocne pole %d\n", data->pomocnePole[(fig) - 1]);
-            data->zahral = true;
-        } else if (data->poleFigurok[(fig + 4) - 1] == 0 && hod != 6) {
-            printf("Hrac 2 - sa nepohol nikam \n");
-            data->zahral = false;
-
-        } else {
-            if (data->pomocnePole[(fig) - 1] + hod <= 45) {
-                if (data->pomocnePole[(fig) - 1] + hod == 45) {
-                    data->pomocnePole[(fig) - 1] += hod;
-                    //
-                    data->poleFigurok[(fig + 4) - 1] = 100;
-                    printf("Hrac 2 - hodil kockou (%d) a figurka (%d) je na konci \n", hod, fig + 4);
-                    data->zahral = true;
-                    for (int i = 4; i < 8; i++) {
-                        if (data->poleFigurok[i] == 100){
-                            druhy += 1;
-                        }
-                    }
-
-                    printf("Hrac 2 - v cieli je %d. panacik\n", druhy);
-                    if (druhy > 3)
-                    {
-                        data->koniecHodnota = 2;
+                        data->vitaz = HRAC_1;
                         *data->koniecHry = 1;
                     }
                 } else {
-                    printf("Hrac 2 - hodil kockou (%d) a a posuva figurkou (%d) \n", hod, fig + 4);
-                    data->pomocnePole[(fig) - 1] += hod; //40  //21
-                    printf("Pomocne pole figurky %d je %d\n", fig, data->pomocnePole[(fig) - 1]);
-                    data->poleFigurok[(fig + 4) - 1] += hod;   //20  //41
+                    data->poleFigurok[fig - 1] += hod;
                     data->zahral = true;
-                    if (data->pomocnePole[(fig) - 1] >= 21 && data->poleFigurok[(fig + 4) - 1] > 20 && data->pomocnePole[(fig) - 1] <= 40)          //ked prejde cez 40
+                }
+            }
+        }
+        return data->poleFigurok[fig - 1];
+    } else if (kto == HRAC_2) {
+        if (data->poleFigurok[(fig + 4) - 1] == 0 && hod == 6) {
+            data->poleFigurok[(fig + 4) - 1] += 21;
+            data->pomocnePole[(fig) - 1] += 1;
+            data->zahral = true;
+        } else if (data->poleFigurok[(fig + 4) - 1] == 0 && hod != 6) {
+            data->zahral = false;
+        } else {
+            if (data->pomocnePole[(fig) - 1] + hod <= HRACIA_PLOCHA_STROP) {
+                if (data->pomocnePole[(fig) - 1] + hod == HRACIA_PLOCHA_STROP) {
+                    data->pomocnePole[(fig) - 1] += hod;
+                    data->poleFigurok[(fig + 4) - 1] = CIEL_HODNOTA;
+                    data->zahral = true;
+                    for (int i = 4; i < 8; i++) {
+                        if (data->poleFigurok[i] == CIEL_HODNOTA){
+                            druhyCiel += 1;
+                        }
+                    }
+                    if (druhyCiel > 3)
+                    {
+                        data->vitaz = HRAC_2;
+                        *data->koniecHry = 1;
+                    }
+                } else {
+                    data->pomocnePole[(fig) - 1] += hod;
+                    data->poleFigurok[(fig + 4) - 1] += hod;
+                    data->zahral = true;
+                    if (data->pomocnePole[(fig) - 1] >= 21 && data->poleFigurok[(fig + 4) - 1] > 20 && data->pomocnePole[(fig) - 1] <= 40)
                     {
                         data->poleFigurok[(fig + 4) - 1] -= 40;
                     }
@@ -285,35 +228,29 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
                         data->poleFigurok[(fig + 4) - 1] = data->pomocnePole[(fig) - 1] + 5;
                     }
                 }
-            } else {
-                printf("Hrac 2 - preskocil si domcek, hodil si kockou (%d) \n", hod);
             }
         }
-
-            return data->poleFigurok[(fig + 4) - 1];
-
+        return data->poleFigurok[(fig + 4) - 1];
     }
 }
 
 bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
-    if (kto == 1) {
+    if (kto == HRAC_1) {
         for (int i = 0; i < 8; i++) {
-            if (fig != i+1 && akt != 100 && akt != 0)
+            if (fig != i+1 && akt != CIEL_HODNOTA && akt != 0)
             {
                 if (akt == data->poleFigurok[i])
                 {
                     data->poleFigurok[i] = 0;
-                    printf("Hrac 1 - vyhodil panacika, konkretne figurku %d \n", i+1);
                     return true;
                 }
             }
         }
-    } else if (kto == 2) {
+    } else if (kto == HRAC_2) {
         for (int i = 0; i < 8; i++) {
-            if (fig+4 != i+1 && akt != 100 && akt != 0) {
+            if (fig+4 != i+1 && akt != CIEL_HODNOTA && akt != 0) {
                 if (akt == data->poleFigurok[i]) {
                     data->poleFigurok[i] = 0;
-                    printf("Hrac 2 - vyhodil panacika, konkretne figurku %d \n", i + 1);
                     return true;
                 }
             }
