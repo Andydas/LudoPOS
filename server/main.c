@@ -37,7 +37,7 @@ int main(int argc, char * argv[])
         return 2;
     }
 
-    listen(sockfd, MAX_POCET_HRACOV);
+    listen(sockfd, 5);
     cli_len = sizeof(klientAdresa);
 
     DATA poleData[MAX_POCET_HRACOV];
