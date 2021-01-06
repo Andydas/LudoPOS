@@ -1,5 +1,7 @@
 #include "funkcie.h"
 
+#define MAX_POCET_HRACOV 2
+
 int main(int argc, char * argv[])
 {
     pocetUsers = 0;
@@ -7,7 +9,7 @@ int main(int argc, char * argv[])
     koniecHodnota = 0;
     int poleFigurok[8] = {0};
     int polePomocne[4] = {0};
-    int onlineUsers[3] = {0};
+    int onlineUsers[2] = {0};
     bool zahral = false;
 
     if (argc < 2)
@@ -35,25 +37,25 @@ int main(int argc, char * argv[])
         return 2;
     }
 
-    listen(sockfd, 5);
+    listen(sockfd, MAX_POCET_HRACOV);
     cli_len = sizeof(klientAdresa);
 
-    DATA poleData[5];
-    pthread_t threads[5];
-    int userIDs[5];
+    DATA poleData[MAX_POCET_HRACOV];
+    pthread_t threads[MAX_POCET_HRACOV];
+    int userIDs[MAX_POCET_HRACOV];
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < MAX_POCET_HRACOV; i++) {
         userIDs[i] = 0;
     }
 
-    while (pocetUsers < 4){
+    while (pocetUsers < MAX_POCET_HRACOV){
         int socketKlient = accept(sockfd, (struct sockaddr *) &klientAdresa, &cli_len);
         if (socketKlient < 0) {
             perror("Chyba pri accepte" );
             return 3;
         }
-        pocetUsers++;
-        onlineUSers[pocetUsers - 1] = 1;
+
+        onlineUSers[pocetUsers] = 1;
         bzero(buffer,256);
 
         DATA pomData;
@@ -63,7 +65,7 @@ int main(int argc, char * argv[])
         pomData.poleFigurok = poleFigurok;
         pomData.pomocnePole = polePomocne;
         pomData.onlineUsers = onlineUSers;
-        pomData.ID = pocetUsers;
+        pomData.ID = pocetUsers +1;
         pomData.n = n;
         pomData.userNaRade = &userNaRade;
         poleData->koniecHodnota = koniecHodnota;
@@ -71,12 +73,13 @@ int main(int argc, char * argv[])
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 
-       pthread_create(&threads[pocetUsers], NULL, &komunikacia, &poleData[pocetUsers]);
-    }
-
-    for(int i = 0; i < 5; i++) {
-        pthread_join(threads[i], NULL);
+        pthread_create(&threads[pocetUsers], NULL, &komunikacia, &poleData[pocetUsers]);
+        pocetUsers++;
     }
     close(sockfd);
+    for(int i = 0; i < MAX_POCET_HRACOV; i++) {
+        pthread_join(threads[i], NULL);
+
+    }
     return 0;
 }

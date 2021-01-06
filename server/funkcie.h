@@ -23,7 +23,7 @@ struct sockaddr_in serverAdresa;
 struct sockaddr_in klientAdresa;
 int n;
 char buffer[256];
-int onlineUSers[5];
+int onlineUSers[2];
 
 typedef struct data {
     volatile int * onlineUsers;
