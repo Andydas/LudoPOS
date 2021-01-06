@@ -34,13 +34,16 @@ typedef struct data {
     int ID;
     int * userNaRade;
     int koniecHodnota;
-    bool * koniecHry;
+    int * koniecHry;
     bool zahral;
+    pthread_mutex_t * mut;
+    pthread_cond_t * prve;
+    pthread_cond_t * druhe;
 } DATA;
 
 void* komunikacia(void* param);
 void zapis(DATA *data, int kto, int hod, int fig);
-bool rezignaciaF(int kto, int hod, int fig, int rez, DATA * data);
+int rezignaciaF(int kto, int hod, int fig, int rez, DATA * data);
 int logikaHryF(int kto, int hod, int fig, DATA * data, int prvy, int druhy);
 bool vyhodenieF(int kto, int fig, int akt, DATA * data);
 

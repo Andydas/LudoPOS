@@ -5,7 +5,7 @@
 
 int main(int argc, char * argv[])
 {
-    bool koniecHry = false;
+    int koniecHry = 0;
     pocetUsers = 0;
     userNaRade = 0;
     koniecHodnota = 0;
@@ -49,7 +49,9 @@ int main(int argc, char * argv[])
     for (int i = 0; i < MAX_POCET_HRACOV; i++) {
         userIDs[i] = 0;
     }
-
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t prve = PTHREAD_COND_INITIALIZER;
+    pthread_cond_t druhe = PTHREAD_COND_INITIALIZER;
     while (pocetUsers < MAX_POCET_HRACOV){
         int socketKlient = accept(sockfd, (struct sockaddr *) &klientAdresa, &cli_len);
         if (socketKlient < 0) {
@@ -73,15 +75,22 @@ int main(int argc, char * argv[])
         poleData->koniecHodnota = koniecHodnota;
         pomData.zahral = &zahral;
         pomData.koniecHry = &koniecHry;
+        pomData.mut = &mut;
+        pomData.prve = &prve;
+        pomData.druhe = &druhe;
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 
         pthread_create(&threads[pocetUsers], NULL, &komunikacia, &poleData[pocetUsers]);
         pocetUsers++;
     }
+
     close(sockfd);
     for(int i = 0; i < MAX_POCET_HRACOV; i++) {
         pthread_join(threads[i], NULL);
     }
+    pthread_mutex_destroy(&mut);
+    pthread_cond_destroy(&prve);
+    pthread_cond_destroy(&druhe);
     return 0;
 }

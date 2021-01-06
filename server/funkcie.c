@@ -16,16 +16,49 @@ void* komunikacia(void * param) {
     char buffCitanie[256];
     *data->userNaRade = 1;
 
-    while (!(*data->koniecHry)) {
+    while (*data->koniecHry != 1) {
+        pthread_mutex_lock(data->mut);
+        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
+        {
+            printf("Zakaznik 1 bude cakat  a vlakno %d\n", data->socketKlient - 3);
+            pthread_cond_wait(data->prve, data->mut);
+        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
+        {
+            printf("Zakaznik 2 bude cakat a vlakno %d\n", data->socketKlient - 3);
+            pthread_cond_wait(data->druhe, data->mut);
+        }
         vyhodil = false;
         if (pocetUsers >= 2) {
                 zapis(data, ktoHral, hodKockou, ktoraFigurka);
+        } else {
+            if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
+            {
+                printf("Zakaznik 1 bude cakat else contin a vlakno %d\n", data->socketKlient - 3);
+
+                pthread_cond_signal(data->druhe);
+            } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
+            {
+                printf("Zakaznik 2 bude cakat else contin a vlakno %d\n", data->socketKlient - 3);
+
+                pthread_cond_signal(data->prve);
+            }
+            pthread_mutex_unlock(data->mut);
+            continue;
+
         }
 
         bzero(buffCitanie, 256);
         data->n = read(*data->userNaRade + 3, buffCitanie, 255);
         if (data->n < 0) {
             perror("Nepodarilo sa nacitat zo socketu");
+            printf ("Zatvaram socket Brano povedal nieco ze po zlom citanji%d \n", data->socketKlient - 3);
+            if (data->socketKlient == 4) {
+                pthread_cond_signal(data->druhe);
+            } else {
+                pthread_cond_signal(data->prve);
+            }
+            close(data->socketKlient);
+            return NULL;
         }
         printf("Sprava od hraca %d:\n", buffCitanie[0]);
         ktoHral = buffCitanie[0];
@@ -33,30 +66,52 @@ void* komunikacia(void * param) {
         ktoraFigurka = buffCitanie[2];
         rezignacia = buffCitanie[10];
 
-        *data->koniecHry= rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
+        *data->koniecHry = rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
 
-        aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data, prvy, druhy);
+        if (*data->koniecHry != 1)
+        {
+            aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data, prvy, druhy);
 
-        //kontrola vyhodenia panacika
-        vyhodil = vyhodenieF(ktoHral, ktoraFigurka, aktualnaPozicka, data);
+            //kontrola vyhodenia panacika
+            vyhodil = vyhodenieF(ktoHral, ktoraFigurka, aktualnaPozicka, data);
 
 
-        if (hodKockou != 6) {
-            if (!vyhodil) {
-                if (pocetUsers == ktoHral ) {                           //&& data->onlineUsers[0] == 1
+            if (hodKockou != 6) {
+                if (!vyhodil) {
+                    if (pocetUsers == ktoHral ) {                           //&& data->onlineUsers[0] == 1
                         *data->userNaRade = 1;
-                        if (!(*data->koniecHry))
-                        printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
-                } else  {                                               //data->onlineUsers[1] == 1
-                        *data->userNaRade = 2;
-                        if (!(*data->koniecHry))
+                        if (!(data->koniecHry))
                             printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
+                    } else  {                                               //data->onlineUsers[1] == 1
+                        *data->userNaRade = 2;
+                        if (!(data->koniecHry))
+                            printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
+                    }
                 }
             }
         }
+        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
+        {
+            printf("Zakaznik 1 bude cakat na konci a vlakno %d\n", data->socketKlient - 3);
+
+            pthread_cond_signal(data->druhe);
+        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 5)
+        {
+            printf("Zakaznik 2 bude cakat na konci a vlakno %d\n", data->socketKlient - 3);
+
+            pthread_cond_signal(data->prve);
+        }
+        pthread_mutex_unlock(data->mut);
     }
 
+    printf ("Zatvaram socket %d \n", data->socketKlient - 3);
+    if (data->socketKlient == 4) {
+        pthread_cond_signal(data->druhe);
+    } else {
+        pthread_cond_signal(data->prve);
+    }
     close(data->socketKlient);
+    return NULL;
 }
 
 void zapis(DATA *data, int kto, int hod, int fig) {
@@ -96,7 +151,7 @@ void zapis(DATA *data, int kto, int hod, int fig) {
     }
 }
 
-bool rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
+int rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
 
     if (kto == 1 && rez == 1)
     {
@@ -104,7 +159,7 @@ bool rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
         data->koniecHodnota = 2;
         printf("Hrac 2 vyhrava, hrac 1 sa odpojil \n");
         zapis(data, kto, hod, fig);
-        return true;
+        return 1;
     }
     else if (kto == 2 && rez == 1)
     {
@@ -112,9 +167,9 @@ bool rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
         data->koniecHodnota = 1;
         printf("Hrac 1 vyhrava, hrac 2 sa odpojil \n");
         zapis(data, kto, hod, fig);
-        return true;
+        return 1;
     } else {
-        return false;
+        return 0;
     }
 }
 
