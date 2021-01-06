@@ -83,9 +83,10 @@ void* komunikacia(void * param) {
 
         *data->koniecHry = rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
 
+        aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data, prvy, druhy);
+
         if (*data->koniecHry != 1)
         {
-            aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data, prvy, druhy);
 
             //kontrola vyhodenia panacika
             vyhodil = vyhodenieF(ktoHral, ktoraFigurka, aktualnaPozicka, data);
@@ -104,6 +105,9 @@ void* komunikacia(void * param) {
                     }
                 }
             }
+        } else {
+            printf("Signal 87\n");
+            zapis(data, ktoHral, hodKockou, ktoraFigurka);
         }
         if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == 4)
         {
@@ -221,6 +225,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
                     if (prvy > 3)
                     {
                      data->koniecHodnota = 1;
+                     *data->koniecHry = 1;
                     }
                 } else {
                     data->poleFigurok[fig - 1] += hod;
@@ -262,6 +267,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data, int prvy, int druhy) {
                     if (druhy > 3)
                     {
                         data->koniecHodnota = 2;
+                        *data->koniecHry = 1;
                     }
                 } else {
                     printf("Hrac 2 - hodil kockou (%d) a a posuva figurkou (%d) \n", hod, fig + 4);
