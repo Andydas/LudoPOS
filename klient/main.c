@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <time.h>
+#include <ctype.h>
 
 #define POCET_HRACOV 2
 #define POCET_PANACIKOV 8
@@ -208,8 +209,9 @@ void zapisServerData(DATA* data, int id, int hod, int panacik, int rezignacia){
 
 bool mozeHybatPanacikom(DATA* data, int hod){
     bool vsetciDomcek = true;
-    bool niektoDoma = false;
+    bool niektoDoma;
     if (data->ID == 1){
+        niektoDoma = false;
         //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 0; i < 4; i++) {
             if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
@@ -236,17 +238,23 @@ bool mozeHybatPanacikom(DATA* data, int hod){
             }
         }
     } else  if (data->ID == 2){
+        niektoDoma = false;
         //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
         for (int i = 4; i < 8; i++) {
             if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
                 vsetciDomcek = false;
                 break;
+            } if (data->poziciePanacikov[i] == 0) {
+                niektoDoma = true;
             }
         }
         if (vsetciDomcek && hod == 6) {
             return true;
         } else if (vsetciDomcek && hod != 6){
             return false;
+        }
+        if (niektoDoma && hod ==6){
+            return true;
         }
 
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
@@ -303,24 +311,29 @@ void citajVstupKonzola(DATA* data){
         printf("1 - hod kockou\n");
         printf("0 - vzdaj sa \n");
         printf("HRAC %d, co si zelas spravit?: ",data->ID);
+        int vstupKonzolaChar;
         int vstupKonzola;
-        scanf("%d", &vstupKonzola);
+        do
+            vstupKonzolaChar = getchar();
+        while (isspace(vstupKonzolaChar));
+        vstupKonzola = vstupKonzolaChar - 48;
 
-        if (vstupKonzola == 1 || vstupKonzola == 0){
-        //if (vstupKonzola < 7 && vstupKonzola > -1){
+        //if (vstupKonzola == 1 || vstupKonzola == 0){
+        if (vstupKonzola < 7 && vstupKonzola > -1){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 7, 1, 1);
                 printf("Vzdal si sa PREHRAVAS\n");
                 data->koniecHry = true;
             } else {
-                int hod = hodKockou();
-                //int hod = vstupKonzola;
+                //int hod = hodKockou();
+                int hod = vstupKonzola;
                 printf("Hodil si kockou, hodil si: %d\n", hod);
                 //moze hybat??????????????????????????????????????????????????????????????
                 if (mozeHybatPanacikom(data, hod)){
                     bool okVstupPanacik = false;
                     while (!okVstupPanacik){
+                        char vstupPanacikChar;
                         int vstupPanacik;
                         int vstupy[4] = {0};
                         printf("Ktorym panacikom sa chces posunut?\n");
@@ -331,7 +344,10 @@ void citajVstupKonzola(DATA* data){
                                     vstupy[i-1]=i;
                                 }
                             }
-                            scanf("%d", &vstupPanacik);
+                            do
+                                vstupPanacikChar = getchar();
+                            while (isspace(vstupPanacikChar));
+                            vstupPanacik = vstupPanacikChar - 48;
                             for (int i = 0; i < 4; i++) {
                                 if (vstupy[i] == vstupPanacik) {
                                     okVstupPanacik = true;
@@ -350,7 +366,10 @@ void citajVstupKonzola(DATA* data){
                                     vstupy[i-5]=i;
                                 }
                             }
-                            scanf("%d", &vstupPanacik);
+                            do
+                                vstupPanacikChar = getchar();
+                            while (isspace(vstupPanacikChar));
+                            vstupPanacik = vstupPanacikChar - 48;
                             for (int i = 0; i < 4; i++) {
                                 if (vstupy[i] == vstupPanacik) {
                                     okVstupPanacik = true;
@@ -452,6 +471,7 @@ void zobrazPravidla(){
 
 int main(int argc, char *argv[])
 {    bool vstupOK = false;
+    char vstupChar;
     int vstup;
     while (!vstupOK) {
         printf("VITAJ V APLIKACII LUDO\n");
@@ -459,12 +479,15 @@ int main(int argc, char *argv[])
         printf("2 - Zobraz pravidla\n");
         printf("0 - Vypni aplikaciu\n");
         printf("Co chces urobit?: ");
-        scanf("%d", &vstup);
+        do
+            vstupChar = getchar();
+        while (isspace(vstupChar));
+        vstup = vstupChar - 48;
         if (vstup >= 0 && vstup <= 2){
-            if (vstup == 2) {
+            if (vstup == 50) {
                 zobrazPravidla();
-                vstup = false;
-            } else if (vstup == 0) {
+                vstupOK = false;
+            } else if (vstup == 48) {
                 return 0;
             } else {
                 DATA pomData;
@@ -537,6 +560,8 @@ int main(int argc, char *argv[])
             }
 
         }
+        vstupOK = false;
+        printf("Neplatny vstupChar\n");
     }
 
 }
