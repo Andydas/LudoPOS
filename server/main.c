@@ -1,9 +1,11 @@
 #include "funkcie.h"
 
+
 #define MAX_POCET_HRACOV 2
 
 int main(int argc, char * argv[])
 {
+    bool koniecHry = false;
     pocetUsers = 0;
     userNaRade = 0;
     koniecHodnota = 0;
@@ -70,6 +72,7 @@ int main(int argc, char * argv[])
         pomData.userNaRade = &userNaRade;
         poleData->koniecHodnota = koniecHodnota;
         pomData.zahral = &zahral;
+        pomData.koniecHry = &koniecHry;
         poleData[pocetUsers] = pomData;
         userIDs[pocetUsers] = socketKlient;
 
@@ -79,7 +82,6 @@ int main(int argc, char * argv[])
     close(sockfd);
     for(int i = 0; i < MAX_POCET_HRACOV; i++) {
         pthread_join(threads[i], NULL);
-
     }
     return 0;
 }

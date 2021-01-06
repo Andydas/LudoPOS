@@ -2,7 +2,7 @@
 
 void* komunikacia(void * param) {
     DATA* data = (DATA*) param;
-    bool koniec = false;
+    //bool koniec = false;
     bool vyhodil = false;
     int ktoHral = 0;
     int hodKockou = 0;
@@ -16,7 +16,7 @@ void* komunikacia(void * param) {
     char buffCitanie[256];
     *data->userNaRade = 1;
 
-    while (!koniec) {
+    while (!(*data->koniecHry)) {
         vyhodil = false;
         if (pocetUsers >= 2) {
                 zapis(data, ktoHral, hodKockou, ktoraFigurka);
@@ -33,7 +33,7 @@ void* komunikacia(void * param) {
         ktoraFigurka = buffCitanie[2];
         rezignacia = buffCitanie[10];
 
-        koniec = rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
+        *data->koniecHry= rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
 
         aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data, prvy, druhy);
 
@@ -45,11 +45,11 @@ void* komunikacia(void * param) {
             if (!vyhodil) {
                 if (pocetUsers == ktoHral ) {                           //&& data->onlineUsers[0] == 1
                         *data->userNaRade = 1;
-                        if (!koniec)
+                        if (!(*data->koniecHry))
                         printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
                 } else  {                                               //data->onlineUsers[1] == 1
                         *data->userNaRade = 2;
-                        if (!koniec)
+                        if (!(*data->koniecHry))
                             printf("Na rade bude %d a online %d \n", *data->userNaRade, data->onlineUsers[*data->userNaRade - 1]);
                 }
             }

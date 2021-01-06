@@ -34,6 +34,7 @@ typedef struct data {
     int ID;
     int * userNaRade;
     int koniecHodnota;
+    bool * koniecHry;
     bool zahral;
 } DATA;
 
