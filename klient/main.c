@@ -64,7 +64,7 @@ void vypisNaKonzolu(DATA * data){
     //kontrolny vypis komunikacie
     printf("Moje idcko je: %d\n", data->ID);
     //printf("Na rade je: %d\n", data->ktoJeNaRade);
-    /*printf("Vyherca je: %d\n", data->vyherca);
+    //printf("Vyherca je: %d\n", data->vyherca);
     if (data->ID == 1) {
         for (int i = 0; i < 4; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
@@ -79,7 +79,7 @@ void vypisNaKonzolu(DATA * data){
         for (int i = 4; i < 8; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
         }
-    }*/
+    }
     printf("----------------------- \n");
     printf("Minule kolo hral hrac %d \n", data->ktoCitanie);
     printf("Hodil %d \n", data->hodCitanie);
@@ -323,8 +323,8 @@ void citajVstupKonzola(DATA* data){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 7, 1, 1);
-                printf("Vzdal si sa PREHRAVAS\n");
-                data->koniecHry = true;
+                //printf("Vzdal si sa PREHRAVAS\n");
+                //data->koniecHry = true;
             } else {
                 //int hod = hodKockou();
                 int hod = vstupKonzola;
@@ -484,10 +484,10 @@ int main(int argc, char *argv[])
         while (isspace(vstupChar));
         vstup = vstupChar - 48;
         if (vstup >= 0 && vstup <= 2){
-            if (vstup == 50) {
+            if (vstup == 2) {
                 zobrazPravidla();
                 vstupOK = false;
-            } else if (vstup == 48) {
+            } else if (vstup == 0) {
                 return 0;
             } else {
                 DATA pomData;

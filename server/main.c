@@ -2,7 +2,7 @@
 
 int main(int argc, char * argv[])
 {
-    printf("V1 \n");
+    printf("JUST SHIFT\n");
     int koniecHry = 0;
     pocetUsers = 0;
     userNaRade = 0;
@@ -68,12 +68,27 @@ int main(int argc, char * argv[])
         pocetUsers++;
     }
 
+    printf("JANKO\n");
     close(sockfd);
     for(int i = 0; i < MAX_POCET_HRACOV; i++) {
         pthread_join(threads[i], NULL);
     }
+
+    printf("ZATRVARAM MAIN SOCKET 1\n");
+    close(SOCKET_ID_1);
+    printf("ZATRVARAM MAIN SOCKET 2\n");
+    close(SOCKET_ID_2);
+
+
+
+    /*close(SOCKET_ID_1);
+    close(SOCKET_ID_1);*/
+
+
     pthread_mutex_destroy(&mut);
     pthread_cond_destroy(&prve);
     pthread_cond_destroy(&druhe);
+
+    printf("DOVIDOPO\n");
     return 0;
 }
