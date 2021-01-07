@@ -65,7 +65,7 @@ void vypisNaKonzolu(DATA * data){
     printf("Moje idcko je: %d\n", data->ID);
     //printf("Na rade je: %d\n", data->ktoJeNaRade);
     //printf("Vyherca je: %d\n", data->vyherca);
-    if (data->ID == 1) {
+    /*if (data->ID == 1) {
         for (int i = 0; i < 4; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
         }
@@ -79,7 +79,7 @@ void vypisNaKonzolu(DATA * data){
         for (int i = 4; i < 8; i++) {
             printf("Panacik %d (moj) je na pozicii: %d\n", i+1, data->poziciePanacikov[i]);
         }
-    }
+    }*/
     printf("----------------------- \n");
     printf("Minule kolo hral hrac %d \n", data->ktoCitanie);
     if (data->hodCitanie == 7) {
@@ -325,16 +325,16 @@ void citajVstupKonzola(DATA* data){
         while (isspace(vstupKonzolaChar));
         vstupKonzola = vstupKonzolaChar - 48;
 
-        //if (vstupKonzola == 1 || vstupKonzola == 0){
-        if (vstupKonzola < 7 && vstupKonzola > -1){
+        if (vstupKonzola == 1 || vstupKonzola == 0){
+        //if (vstupKonzola < 7 && vstupKonzola > -1){
             //kontrolujem ci rezignoval
             if (vstupKonzola == 0){
                 zapisServerData(data, data->ID, 7, 1, 1);
                 //printf("Vzdal si sa PREHRAVAS\n");
                 //data->koniecHry = true;
             } else {
-                //int hod = hodKockou();
-                int hod = vstupKonzola;
+                int hod = hodKockou();
+                //int hod = vstupKonzola;
                 printf("Hodil si kockou, hodil si: %d\n", hod);
                 //moze hybat??????????????????????????????????????????????????????????????
                 if (mozeHybatPanacikom(data, hod)){
