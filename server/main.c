@@ -2,6 +2,7 @@
 
 int main(int argc, char * argv[])
 {
+    printf("V1 \n");
     int koniecHry = 0;
     pocetUsers = 0;
     userNaRade = 0;

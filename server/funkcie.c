@@ -3,6 +3,7 @@
 void* komunikacia(void * param) {
     DATA* data = (DATA*) param;
     bool vyhodil = false;
+    bool zaciatok = true;
     int ktoHral = 0;
     int hodKockou = 0;
     int ktoraFigurka = 0;
@@ -14,7 +15,10 @@ void* komunikacia(void * param) {
     *data->userNaRade = HRAC_1;
 
     while (*data->koniecHry != 1) {
-
+        if (pocetUsers >= MAX_POCET_HRACOV && zaciatok && data->socketKlient == SOCKET_ID_1) {
+            zapis(data, ktoHral, hodKockou, ktoraFigurka);
+            zaciatok = false;
+        }
         pthread_mutex_lock(data->mut);
         if (*data->koniecHry == 1){
             pthread_mutex_unlock(data->mut);
@@ -32,7 +36,7 @@ void* komunikacia(void * param) {
         vyhodil = false;
 
         if (pocetUsers >= MAX_POCET_HRACOV) {
-            zapis(data, ktoHral, hodKockou, ktoraFigurka);
+            //zapis(data, ktoHral, hodKockou, ktoraFigurka);
         } else {
             if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
             {
@@ -80,9 +84,9 @@ void* komunikacia(void * param) {
                         }
                     }
                 }
-            } else {
-                zapis(data, ktoHral, hodKockou, ktoraFigurka);
             }
+                zapis(data, ktoHral, hodKockou, ktoraFigurka);
+
         }
         if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
         {
