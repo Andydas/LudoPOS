@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/tmp/tmp.GJTHKBOe26/funkcie.c
+funkcie.h
+/tmp/tmp.GJTHKBOe26/funkcie.h
+
+/tmp/tmp.GJTHKBOe26/funkcie.h
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+unistd.h
+-
+stdbool.h
+-
+pthread.h
+-
+
+/tmp/tmp.GJTHKBOe26/main.c
+funkcie.h
+/tmp/tmp.GJTHKBOe26/funkcie.h
+
