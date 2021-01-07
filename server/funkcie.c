@@ -15,6 +15,7 @@ void* komunikacia(void * param) {
     *data->userNaRade = HRAC_1;
 
     while (*data->koniecHry != 1) {
+        //Informacia pre klientov len na zaciatku hry
         if (pocetUsers >= MAX_POCET_HRACOV && zaciatok && data->socketKlient == SOCKET_ID_1) {
             zapis(data, ktoHral, hodKockou, ktoraFigurka);
             zaciatok = false;
@@ -22,16 +23,12 @@ void* komunikacia(void * param) {
             continue;
         }
         pthread_mutex_lock(data->mut);
+
         if (*data->koniecHry == 1){
-            if (data->socketKlient == SOCKET_ID_1) {
-                pthread_cond_signal(data->druhe);
-            } else {
-                pthread_cond_signal(data->prve);
-            }
-            pthread_mutex_unlock(data->mut);
-            printf("KEKKEKEKEKKEKE TREN UPLNE VRCHNY\n");
+            //ukonci(data);
             break;
         }
+
         if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
         {
             pthread_cond_wait(data->prve, data->mut);
@@ -43,18 +40,11 @@ void* komunikacia(void * param) {
         vyhodil = false;
 
         if (*data->koniecHry == 1){
-            if (data->socketKlient == SOCKET_ID_1) {
-                pthread_cond_signal(data->druhe);
-            } else {
-                pthread_cond_signal(data->prve);
-            }
-            pthread_mutex_unlock(data->mut);
-            printf("KEKKEKEKEKKEKE NOVY TRENCIN\n");
+            //ukonci(data);
             break;
         }
 
         if (pocetUsers >= MAX_POCET_HRACOV) {
-            //zapis(data, ktoHral, hodKockou, ktoraFigurka);
         } else {
             if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
             {
@@ -68,18 +58,10 @@ void* komunikacia(void * param) {
         }
 
         bzero(buffCitanie, BUFF_SIZE);
-        printf("IDEM CITAT %d SOCKET\n", data->socketKlient-3);
         data->n = read(*data->userNaRade + 3, buffCitanie, BUFF_SIZE - 1);
         if (data->n < 0) {
             perror("Nepodarilo sa nacitat zo socketu");
-            printf("PERROR\n");
-            if (data->socketKlient == SOCKET_ID_1) {
-                pthread_cond_signal(data->druhe);
-            } else {
-                pthread_cond_signal(data->prve);
-            }
-            pthread_mutex_unlock(data->mut);
-            printf("KEKKEKEKEKKEKEK TREN VRCHNY\n");
+            //ukonci(data);
             break;
         }
         ktoHral = buffCitanie[0];
@@ -104,34 +86,17 @@ void* komunikacia(void * param) {
                         }
                     }
                 }
-            } else {
-                if (*data->koniecHry == 1){
-                    zapis(data, ktoHral, hodKockou, ktoraFigurka);
-                    if (data->socketKlient == SOCKET_ID_1) {
-                        pthread_cond_signal(data->druhe);
-                    } else {
-                        pthread_cond_signal(data->prve);
-                    }
-                    pthread_mutex_unlock(data->mut);
-                    printf("KEKKEKEKEKKEKE TREN UPLNE VRCHNY\n");
-                    break;
-                }
+            } else if (*data->koniecHry == 1){
+                zapis(data, ktoHral, hodKockou, ktoraFigurka);
+                //ukonci(data);
+                break;
             }
+
             zapis(data, ktoHral, hodKockou, ktoraFigurka);
 
         } else {
-            printf("HRAC SA VZDAL A IDEM VYPISOVAT NIEC\n");
-            if (data->socketKlient == SOCKET_ID_1) {
-                pthread_cond_signal(data->druhe);
-            } else {
-                pthread_cond_signal(data->prve);
-            }
-            pthread_mutex_unlock(data->mut);
-            printf("KEKKEKEKEKKEKEK KONIEC HHRY\n");
-            printf("UZ SOM CLOSOL TAK IDEM BREJKOVAT\n");
+            //ukonci(data);
             break;
-
-            printf("TOTO NESMIE NIKDY BYT\n");
         }
         if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
         {
@@ -142,14 +107,7 @@ void* komunikacia(void * param) {
         }
         pthread_mutex_unlock(data->mut);
     }
-
-    /*if (data->socketKlient == SOCKET_ID_1) {
-        pthread_cond_signal(data->druhe);
-    } else {
-        pthread_cond_signal(data->prve);
-    }
-    pthread_mutex_unlock(data->mut);
-    close(data->socketKlient);*/
+    ukonci(data);
     printf("KONCI VLAKNO %d\n", data->socketKlient - 3);
     return NULL;
 }
@@ -158,7 +116,7 @@ void zapis(DATA *data, int kto, int hod, int fig) {
     char buffZapisovanie[BUFF_SIZE];
     bzero(buffZapisovanie, BUFF_SIZE);
     for (int i = 1; i <= pocetUsers; i++) {
-        printf("ZAPISUJEM PRE %d HRACA , SOM %d VLAKNO\n", i, data->socketKlient-3);
+        printf("ZAPISUJEM PRE %d HRACA , SOM %d. VLAKNO\n", i, data->socketKlient-3);
         buffZapisovanie[0] = i;
         buffZapisovanie[1] = *data->userNaRade;
 
@@ -230,7 +188,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data) {
                             prvyCiel += 1;
                         }
                     }
-                    if (prvyCiel > 0)//zmena
+                    if (prvyCiel > 3)
                     {
                         data->vitaz = HRAC_1;
                         *data->koniecHry = 1;
@@ -250,7 +208,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data) {
         } else if (data->poleFigurok[(fig + 4) - 1] == 0 && hod != 6) {
             data->zahral = false;
         } else {
-            if (data->pomocnePole[(fig) - 1] + hod <= HRACIA_PLOCHA_STROP) {
+            if (data->pomocnePole[(fig) - 1] + hod <= HRACIA_PLOCHA_STROP) {   //17
                 if (data->pomocnePole[(fig) - 1] + hod == HRACIA_PLOCHA_STROP) {
                     data->pomocnePole[(fig) - 1] += hod;
                     data->poleFigurok[(fig + 4) - 1] = CIEL_HODNOTA;
@@ -293,6 +251,10 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
                 if (akt == data->poleFigurok[i])
                 {
                     data->poleFigurok[i] = 0;
+                    if (i > 3)
+                    {
+                        data->pomocnePole[i] = 0;
+                    }
                     return true;
                 }
             }
@@ -302,6 +264,10 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
             if (fig+4 != i+1 && akt != CIEL_HODNOTA && akt != 0) {
                 if (akt == data->poleFigurok[i]) {
                     data->poleFigurok[i] = 0;
+                    if (i > 3)
+                    {
+                        data->pomocnePole[i] = 0;
+                    }
                     return true;
                 }
             }
@@ -310,6 +276,17 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
         return false;
     }
 }
+
+void ukonci(DATA *data) {
+    if (data->socketKlient == SOCKET_ID_1) {
+        pthread_cond_signal(data->druhe);
+    } else {
+        pthread_cond_signal(data->prve);
+    }
+    pthread_mutex_unlock(data->mut);
+}
+
+
 
 
 

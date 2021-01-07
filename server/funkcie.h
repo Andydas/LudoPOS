@@ -53,5 +53,6 @@ void zapis(DATA *data, int kto, int hod, int fig);
 int rezignaciaF(int kto, int hod, int fig, int rez, DATA * data);
 int logikaHryF(int kto, int hod, int fig, DATA * data);
 bool vyhodenieF(int kto, int fig, int akt, DATA * data);
+void ukonci(DATA *data);
 
 #endif //SERVER_FUNKCIE_H
