@@ -18,8 +18,8 @@
 #define POMOCNE_POLE 4
 #define HRAC_1 1
 #define HRAC_2 2
-#define SOCKET_ID_1 1
-#define SOCKET_ID_2 2
+#define SOCKET_ID_1 4
+#define SOCKET_ID_2 5
 #define HRACIA_PLOCHA_STROP 45
 #define CIEL_HODNOTA 100
 
