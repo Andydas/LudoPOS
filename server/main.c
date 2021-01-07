@@ -79,12 +79,6 @@ int main(int argc, char * argv[])
     printf("ZATRVARAM MAIN SOCKET 2\n");
     close(SOCKET_ID_2);
 
-
-
-    /*close(SOCKET_ID_1);
-    close(SOCKET_ID_1);*/
-
-
     pthread_mutex_destroy(&mut);
     pthread_cond_destroy(&prve);
     pthread_cond_destroy(&druhe);
