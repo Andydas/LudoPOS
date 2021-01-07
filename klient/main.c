@@ -82,9 +82,16 @@ void vypisNaKonzolu(DATA * data){
     }
     printf("----------------------- \n");
     printf("Minule kolo hral hrac %d \n", data->ktoCitanie);
-    printf("Hodil %d \n", data->hodCitanie);
+    if (data->hodCitanie == 7) {
+        printf("Vzdal sa\n");
+    } else {
+        printf("Hodil %d \n", data->hodCitanie);
+    }
+
     if (data->panacikCitanie == -1){
         printf("Neposunul ziadneho panacika\n");
+    } else if (data->panacikCitanie == 0 ){
+        printf("\n");
     } else {
         printf("Posunul panacika %d.\n",data->panacikCitanie);
     }
