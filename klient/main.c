@@ -224,7 +224,8 @@ bool mozeHybatPanacikom(DATA* data, int hod){
             if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
                 vsetciDomcek = false;
                 break;
-            } if (data->poziciePanacikov[i] == 0) {
+            }
+            if (data->poziciePanacikov[i] == 0) {
                 niektoDoma = true;
             }
         }
@@ -237,13 +238,13 @@ bool mozeHybatPanacikom(DATA* data, int hod){
             return true;
         }
 
-
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
         for (int i = 0; i < 4; i++) {
-            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != ID_CIEL) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK)){
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] != ID_CIEL) && (data->poziciePanacikov[i] + hod <= POCET_POLICOK) && (data->poziciePanacikov[i] != 0)){
                 return true;
             }
         }
+        return false;
     } else  if (data->ID == 2){
         niektoDoma = false;
         //su vsetci moji panacikovia v domceku? ak ano mozem sa hybat len po hode 6
@@ -251,7 +252,8 @@ bool mozeHybatPanacikom(DATA* data, int hod){
             if (data->poziciePanacikov[i] > 0 && data->poziciePanacikov[i] < 100) {
                 vsetciDomcek = false;
                 break;
-            } if (data->poziciePanacikov[i] == 0) {
+            }
+            if (data->poziciePanacikov[i] == 0) {
                 niektoDoma = true;
             }
         }
@@ -266,12 +268,13 @@ bool mozeHybatPanacikom(DATA* data, int hod){
 
         //mam niekoho von z domceka? ak ano mam sa este kam posunut s danym hodom?
         for (int i = 4; i < 8; i++) {
-            if ((!vsetciDomcek) && (data->poziciePanacikov[i] >= 21) && (data->poziciePanacikov[i] + hod <= 50)){
+            if ((!vsetciDomcek) && (data->poziciePanacikov[i] >= 21) && (data->poziciePanacikov[i] + hod <= 50) && (data->poziciePanacikov[i] != 0)){
                 return true;
             } else if ((data->poziciePanacikov[i] + hod <= 25) && (data->poziciePanacikov[i] != 0)){
                 return true;
             }
         }
+        return false;
     }
     return false;
 }

@@ -2,7 +2,6 @@
 
 int main(int argc, char * argv[])
 {
-    printf("JUST SHIFT\n");
     int koniecHry = 0;
     pocetUsers = 0;
     userNaRade = 0;
