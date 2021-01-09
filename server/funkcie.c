@@ -226,6 +226,8 @@ int logikaHryF(int kto, int hod, int fig, DATA *data) {
                     data->poleFigurok[fig - 1] += hod;
                     data->zahral = true;
                 }
+            } else {
+                data->zahral = false;
             }
         }
         return data->poleFigurok[fig - 1];
@@ -266,6 +268,8 @@ int logikaHryF(int kto, int hod, int fig, DATA *data) {
                         data->poleFigurok[(fig + 4) - 1] = data->pomocnePole[(fig) - 1] + 5;
                     }
                 }
+            } else {
+                data->zahral = false;
             }
         }
         return data->poleFigurok[(fig + 4) - 1];
@@ -283,11 +287,8 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
             {
                 if (akt == data->poleFigurok[i])
                 {
+                    //printf("Hrac %d vyhodil s panacikom %d na pozicii %d panacika %d na pozicii %d\n", kto, fig, data->poleFigurok[fig-1], i+1, data->poleFigurok[i]);
                     data->poleFigurok[i] = 0;
-                    if (i > 3)
-                    {
-                        data->pomocnePole[i] = 0;
-                    }
                     return true;
                 }
             }
@@ -296,11 +297,8 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
         for (int i = 0; i < 8; i++) {
             if (fig+4 != i+1 && akt != CIEL_HODNOTA && akt != 0) {
                 if (akt == data->poleFigurok[i]) {
+                    //printf("Hrac %d vyhodil s panacikom %d na pozicii %d panacika %d na pozicii %d\n", kto, fig, data->poleFigurok[fig+4-1], i+1, data->poleFigurok[i]);
                     data->poleFigurok[i] = 0;
-                    if (i > 3)
-                    {
-                        data->pomocnePole[i] = 0;
-                    }
                     return true;
                 }
             }
