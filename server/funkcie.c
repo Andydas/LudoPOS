@@ -1,5 +1,8 @@
 #include "funkcie.h"
 
+  /*
+  Metoda vlakna v ktorej dochadza k vymene informacii a logike po hracovom tahu.
+  */
 void* komunikacia(void * param) {
     DATA* data = (DATA*) param;
     bool vyhodil = false;
@@ -15,36 +18,41 @@ void* komunikacia(void * param) {
     *data->userNaRade = HRAC_1;
 
     while (*data->koniecHry != 1) {
-        //Informacia pre klientov len na zaciatku hry
+
+        //Informacia pre klientov len na zaciatku hry.
         if (pocetUsers >= MAX_POCET_HRACOV && zaciatok && data->socketKlient == SOCKET_ID_1) {
             zapis(data, ktoHral, hodKockou, ktoraFigurka);
             zaciatok = false;
         } else if (pocetUsers < MAX_POCET_HRACOV && zaciatok){
             continue;
         }
+
+        //Zamknutie vlakna.
         pthread_mutex_lock(data->mut);
 
-        if (*data->koniecHry == 1){
-            //ukonci(data);
-            break;
-        }
-
-        if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
-        {
-            pthread_cond_wait(data->prve, data->mut);
-        } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_2)
-        {
-            pthread_cond_wait(data->druhe, data->mut);
-        }
-
-        vyhodil = false;
-
-        if (*data->koniecHry == 1){
-            //ukonci(data);
-            break;
-        }
-
+        //Ak su napojeny vsetci hraci hra pokracuje ak nie caka sa na dalsich hracov.
         if (pocetUsers >= MAX_POCET_HRACOV) {
+
+            //Kontrola ci uz hra skoncila.
+            if (*data->koniecHry ==  1){
+                break;
+            }
+
+            //Podmienka pre vlakna, aby vedeli kedy maju cakat na signal.
+            if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
+            {
+                pthread_cond_wait(data->prve, data->mut);
+            } else if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_2)
+            {
+                pthread_cond_wait(data->druhe, data->mut);
+            }
+
+            vyhodil = false;
+
+            //Kontrola ci uz hra skoncila.
+            if (*data->koniecHry == 1){
+                break;
+            }
         } else {
             if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
             {
@@ -57,11 +65,11 @@ void* komunikacia(void * param) {
             continue;
         }
 
+        //Vynulovanie a nasledne citanie buffra zo socketu od klienta.
         bzero(buffCitanie, BUFF_SIZE);
         data->n = read(*data->userNaRade + 3, buffCitanie, BUFF_SIZE - 1);
         if (data->n < 0) {
             perror("Nepodarilo sa nacitat zo socketu");
-            //ukonci(data);
             break;
         }
         ktoHral = buffCitanie[0];
@@ -69,14 +77,22 @@ void* komunikacia(void * param) {
         ktoraFigurka = buffCitanie[2];
         rezignacia = buffCitanie[10];
 
+        //Metoda rezignaciaF kontroluje a vracia ci niekto z hracov nerezignoval.
         *data->koniecHry = rezignaciaF(ktoHral, hodKockou, ktoraFigurka, rezignacia, data);
 
+        //Ak hra este neskoncila a nikto nerezignoval pokracuje sa dalej.
         if (*data->koniecHry != 1)
         {
+            //Vykonavanie logiky hry so zistenim ktora figurka zmenila poziciu.
             aktualnaPozicka = logikaHryF(ktoHral, hodKockou, ktoraFigurka, data);
+
+            //Ak este jeden z hracov nema vsetkych hracov v domceku pokracuje sa dalej.
             if (*data->koniecHry != 1) {
+
+                //Kontorla ci nedoslo k vyhodeniu nejakej figurky z hracieho pola.
                 vyhodil = vyhodenieF(ktoHral, ktoraFigurka, aktualnaPozicka, data);
 
+                //Ak hrac hodil 6 alebo vyhodil panacika moze hadzat znova.
                 if (hodKockou != 6) {
                     if (!vyhodil) {
                         if (pocetUsers == ktoHral) {
@@ -86,18 +102,19 @@ void* komunikacia(void * param) {
                         }
                     }
                 }
-            } else if (*data->koniecHry == 1){
+            } else {
                 zapis(data, ktoHral, hodKockou, ktoraFigurka);
-                //ukonci(data);
                 break;
             }
 
+            //Zapis klientom ake zmeny v hre nastali.
             zapis(data, ktoHral, hodKockou, ktoraFigurka);
 
         } else {
-            //ukonci(data);
             break;
         }
+
+        //Podmienka pre vlakna, ak jedno skoncilo aby poslalo signal druhemu ze je na rade.
         if (*data->userNaRade != data->socketKlient - 3 && data->socketKlient == SOCKET_ID_1)
         {
             pthread_cond_signal(data->druhe);
@@ -105,13 +122,19 @@ void* komunikacia(void * param) {
         {
             pthread_cond_signal(data->prve);
         }
+        //Odomknutie mutexu.
         pthread_mutex_unlock(data->mut);
     }
+
+    //Odoslanie signalu a odomknutie mutexu.
     ukonci(data);
     printf("KONCI VLAKNO %d\n", data->socketKlient - 3);
     return NULL;
 }
 
+  /*
+  Metoda ktora zapise do buffra vsetky potrebne informacie o hracovom tahu.
+  */
 void zapis(DATA *data, int kto, int hod, int fig) {
     char buffZapisovanie[BUFF_SIZE];
     bzero(buffZapisovanie, BUFF_SIZE);
@@ -149,6 +172,9 @@ void zapis(DATA *data, int kto, int hod, int fig) {
     }
 }
 
+  /*
+  Metoda ktora kontroluje ci jeden z hracov nerezignoval.
+  */
 int rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
 
     if (kto == HRAC_1 && rez == 1)
@@ -169,6 +195,9 @@ int rezignaciaF(int kto, int hod, int fig, int rez, DATA *data) {
     }
 }
 
+  /*
+  Metoda ktora spravuje logiku hracovho tahu spolu s kontrolou ci uz ma vsetky figurky v domceku.
+  */
 int logikaHryF(int kto, int hod, int fig, DATA *data) {
     int prvyCiel = 0;
     int druhyCiel = 0;
@@ -208,7 +237,7 @@ int logikaHryF(int kto, int hod, int fig, DATA *data) {
         } else if (data->poleFigurok[(fig + 4) - 1] == 0 && hod != 6) {
             data->zahral = false;
         } else {
-            if (data->pomocnePole[(fig) - 1] + hod <= HRACIA_PLOCHA_STROP) {   //17
+            if (data->pomocnePole[(fig) - 1] + hod <= HRACIA_PLOCHA_STROP) {
                 if (data->pomocnePole[(fig) - 1] + hod == HRACIA_PLOCHA_STROP) {
                     data->pomocnePole[(fig) - 1] += hod;
                     data->poleFigurok[(fig + 4) - 1] = CIEL_HODNOTA;
@@ -243,6 +272,10 @@ int logikaHryF(int kto, int hod, int fig, DATA *data) {
     }
 }
 
+
+  /*
+  Metoda ktora kontroluje ci nenastalo vyhodenie figurky ak ano vratenie figurky na start.
+  */
 bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
     if (kto == HRAC_1) {
         for (int i = 0; i < 8; i++) {
@@ -277,6 +310,9 @@ bool vyhodenieF(int kto, int fig, int akt, DATA *data) {
     }
 }
 
+  /*
+  Metoda ktora na konci hry odosle signal druhemu vlaknu a odomkne mutex.
+  */
 void ukonci(DATA *data) {
     if (data->socketKlient == SOCKET_ID_1) {
         pthread_cond_signal(data->druhe);

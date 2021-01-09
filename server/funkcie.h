@@ -23,6 +23,7 @@
 #define HRACIA_PLOCHA_STROP 45
 #define CIEL_HODNOTA 100
 
+
 int pocetUsers;
 int userNaRade;
 int koniecHodnota;

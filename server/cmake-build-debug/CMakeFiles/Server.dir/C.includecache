@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/tmp/tmp.GJTHKBOe26/funkcie.c
+/tmp/tmp.DOirzZSuwO/funkcie.c
 funkcie.h
-/tmp/tmp.GJTHKBOe26/funkcie.h
+/tmp/tmp.DOirzZSuwO/funkcie.h
 
-/tmp/tmp.GJTHKBOe26/funkcie.h
+/tmp/tmp.DOirzZSuwO/funkcie.h
 sys/types.h
 -
 sys/socket.h
@@ -30,7 +30,7 @@ stdbool.h
 pthread.h
 -
 
-/tmp/tmp.GJTHKBOe26/main.c
+/tmp/tmp.DOirzZSuwO/main.c
 funkcie.h
-/tmp/tmp.GJTHKBOe26/funkcie.h
+/tmp/tmp.DOirzZSuwO/funkcie.h
 

@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/tmp/tmp.1cauzVBMgr/funkcie.c" "/tmp/tmp.1cauzVBMgr/cmake-build-debug/CMakeFiles/server.dir/funkcie.c.o"
-  "/tmp/tmp.1cauzVBMgr/main.c" "/tmp/tmp.1cauzVBMgr/cmake-build-debug/CMakeFiles/server.dir/main.c.o"
+  "/tmp/tmp.DOirzZSuwO/funkcie.c" "/tmp/tmp.DOirzZSuwO/cmake-build-debug/CMakeFiles/server.dir/funkcie.c.o"
+  "/tmp/tmp.DOirzZSuwO/main.c" "/tmp/tmp.DOirzZSuwO/cmake-build-debug/CMakeFiles/server.dir/main.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
