@@ -71,7 +71,7 @@ void vypisNaKonzolu(DATA * data){
     if (data->panacikCitanie == -1){
         printf("Neposunul ziadneho panacika\n");
     } else if (data->panacikCitanie == 0 ){
-        printf("\n");
+        printf("Neposunul ziadneho panacika\n");
     } else {
         printf("Posunul panacika %d.\n",data->panacikCitanie);
     }
@@ -217,7 +217,6 @@ bool mozeHybatPanacikom(DATA* data, int hod){
         for (int i = 0; i < 4; i++) {
             if (data->poziciePanacikov[i] > INDEX_DOMCEK && data->poziciePanacikov[i] < INDEX_CIEL) {
                 vsetciDomcek = false;
-                break;
             }
             if (data->poziciePanacikov[i] == INDEX_DOMCEK) {
                 niektoDoma = true;
@@ -245,7 +244,6 @@ bool mozeHybatPanacikom(DATA* data, int hod){
         for (int i = 4; i < 8; i++) {
             if (data->poziciePanacikov[i] > INDEX_DOMCEK && data->poziciePanacikov[i] < INDEX_CIEL) {
                 vsetciDomcek = false;
-                break;
             }
             if (data->poziciePanacikov[i] == INDEX_DOMCEK) {
                 niektoDoma = true;
@@ -301,7 +299,7 @@ bool mozeHybatKonkretnymPanacikom(DATA* data, int hod, int panacik){
         }
     }
     if (data->ID == HRAC2) {
-        if ((!jeVDomceku) && (data->poziciePanacikov[panacik-1] >= 21) && (data->poziciePanacikov[panacik-1] + hod <= POCET_POLICOK+50)){
+        if ((!jeVDomceku) && (data->poziciePanacikov[panacik-1] >= 21) && (data->poziciePanacikov[panacik-1] + hod <= POCET_POLICOK+5)){
             return true;
         } else if ((data->poziciePanacikov[panacik-1] + hod <= POCET_POLICOK - 20)){
             return true;
